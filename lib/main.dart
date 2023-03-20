@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'location.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,13 +35,14 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: ListTile(
-          title: Center(
-              child: Row(children: const [Text('Title'), Icon(Icons.bolt)])),
-          subtitle: const Center(child: Text('Subtitle')),
-          onTap: () {},
-        ),
-      ),
+          // title: ListTile(
+          //   title: Center(
+          //       child: Row(children: const [Text('Title'), Icon(Icons.bolt)])),
+          //   subtitle: const Center(child: Text('Subtitle')),
+          //   onTap: () {},
+          // ),
+          // elevation: ,
+          ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -57,9 +59,9 @@ class _MyHomePageState extends State<MyHomePage> {
           children: const <Widget>[
             infoForeCastCurrent(),
             SizedBox(height: 10),
-            hoursForeCast(),
+            hourlyForeCast(),
             SizedBox(height: 10),
-            daysForeCast(),
+            dailyForeCast(),
             SizedBox(height: 10),
             infoForeCast()
           ],
@@ -81,17 +83,32 @@ class infoForeCastCurrent extends StatelessWidget {
       height: 125,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Color.fromARGB(50, 22, 44, 33),
+        color: Color.fromARGB(50, 56, 66, 82),
       ),
-      child: Column(children: [
-        Text("28 C"),
-        Row(
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // ListTile(leading: Icon(Icons.ac_unit_outlined), title: Text("Test"))
-          ],
-        )
-      ]),
+            Text("Mua"),
+            Text(
+              "28 C",
+              style: TextStyle(fontSize: 60, fontWeight: FontWeight.w800),
+            ),
+            Row(
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Nhiệt độ"),
+                SizedBox(width: 8),
+                Text("2C"),
+                SizedBox(width: 8),
+                Icon(Icons.arrow_drop_down),
+                Text("2C"),
+                SizedBox(width: 8),
+                Icon(Icons.arrow_drop_up),
+                Text("4C"),
+              ],
+            )
+          ]),
     );
   }
 }
@@ -151,8 +168,8 @@ class infoForeCast extends StatelessWidget {
 }
 
 // ignore: camel_case_types
-class daysForeCast extends StatelessWidget {
-  const daysForeCast({
+class dailyForeCast extends StatelessWidget {
+  const dailyForeCast({
     super.key,
   });
 
@@ -168,10 +185,9 @@ class daysForeCast extends StatelessWidget {
       "Brazil",
     ];
     return Container(
-        height: 350,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: Color.fromARGB(50, 22, 44, 33),
+          color: Color.fromARGB(50, 56, 66, 82),
         ),
         child: Column(
           children: daysFor.map((dayFor) {
@@ -199,35 +215,36 @@ class daysForeCast extends StatelessWidget {
 }
 
 // ignore: camel_case_types
-class hoursForeCast extends StatelessWidget {
-  const hoursForeCast({
+class hourlyForeCast extends StatelessWidget {
+  const hourlyForeCast({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     List<String> countries = [
-      "Brazil",
-      "Nepal",
-      "India",
-      "China",
-      "USA",
-      "Canada",
-      "Brazil",
-      "Nepal",
-      "India",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00",
+      "18:00",
+      "19:00",
+      "20:00",
+      "21:00",
     ];
     return Container(
-        height: 125,
+        height: 150,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: Color.fromARGB(50, 22, 44, 33),
+          color: Color.fromARGB(50, 56, 66, 82),
         ),
         child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: countries.map((country) {
-                return box(country, Colors.deepOrangeAccent);
+                return box(country, Colors.transparent);
               }).toList(),
             )));
   }
@@ -235,17 +252,19 @@ class hoursForeCast extends StatelessWidget {
   Widget box(String title, Color backgroundcolor) {
     return Container(
         margin: EdgeInsets.all(10),
-        width: 190,
         color: backgroundcolor,
         alignment: Alignment.center,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title, style: TextStyle(color: Colors.white, fontSize: 20)),
+            Text(title, style: TextStyle(color: Colors.white, fontSize: 18)),
             // Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
-            Icon(Icons.warning_amber),
+            Icon(
+              Icons.cloudy_snowing,
+              size: 45,
+            ),
             // Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
-            Text('25°C')
+            Text('25°C', style: TextStyle(color: Colors.white, fontSize: 18))
           ],
         ));
   }
@@ -261,22 +280,26 @@ class buildMenuItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(children: [
       ListTile(
-        leading: const Icon(Icons.change_history),
+        trailing: const Icon(Icons.arrow_forward_ios),
+        title: const Text('Sửa địa điểm'),
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return const LocationPage();
+          }));
+        },
+      ),
+      ListTile(
+        trailing: const Icon(Icons.arrow_forward_ios),
         title: const Text('Item 1'),
         onTap: () {},
       ),
       ListTile(
-        leading: const Icon(Icons.change_history),
+        trailing: const Icon(Icons.arrow_forward_ios),
         title: const Text('Item 1'),
         onTap: () {},
       ),
       ListTile(
-        leading: const Icon(Icons.change_history),
-        title: const Text('Item 1'),
-        onTap: () {},
-      ),
-      ListTile(
-        leading: const Icon(Icons.change_history),
+        trailing: const Icon(Icons.arrow_forward_ios),
         title: const Text('Vote'),
         onTap: () {},
       ),
