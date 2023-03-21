@@ -8,25 +8,39 @@ class LocationPage extends StatefulWidget {
 }
 
 class _PositionPageState extends State<LocationPage> {
+  bool _isEdit = false;
+  bool _isOpenMap = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        // backgroundColor: Colors.transparent,
-        leading: Icon(Icons.close),
-        title: Text("Sửa địa điểm "),
-        elevation: 0,
-        actions: [
-          TextButton(
-            onPressed: () {},
-            child: Text('Chỉnh sửa'),
-            style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-            ),
-          )
-        ],
-      ),
+      appBar: !_isOpenMap
+          ? AppBar(
+              // backgroundColor: Colors.transparent,
+              leading: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Icon(Icons.close)),
+              title: Text("Sửa địa điểm "),
+              elevation: 0,
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _isEdit = !_isEdit;
+                    });
+                  },
+                  child: Text(!_isEdit ? 'Chỉnh sửa' : 'Làm xong'),
+                  style: ButtonStyle(
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                  ),
+                )
+              ],
+            )
+          : null,
       body: Container(
           width: double.infinity,
           height: double.infinity,
@@ -50,8 +64,10 @@ class _PositionPageState extends State<LocationPage> {
               SearchBar(
                 onSearch: (String) {},
               ),
-              listLocation(),
-              popularLocation()
+              listLocation(
+                isEdit: _isEdit,
+              ),
+              // popularLocation()
             ],
           )),
     );
@@ -166,9 +182,9 @@ class popularLocation extends StatelessWidget {
 
 // ignore: camel_case_types
 class listLocation extends StatelessWidget {
-  const listLocation({
-    super.key,
-  });
+  final bool isEdit;
+
+  const listLocation({super.key, required this.isEdit});
 
   @override
   Widget build(BuildContext context) {
@@ -185,52 +201,80 @@ class listLocation extends StatelessWidget {
   }
 
   Widget day() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
-      decoration: BoxDecoration(
-          border: Border.all(
-              width: 1,
-              color: Color.fromARGB(255, 2, 2, 2),
-              style: BorderStyle.solid),
-          borderRadius: BorderRadius.circular(10)), 
-      height: 100,
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Hanoi",
-              style: TextStyle(fontWeight: FontWeight.w700),
-            ),
-            Text(
-              "3/10    09:18",
-              style: TextStyle(fontWeight: FontWeight.w600),
-            )
-          ],
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Row(children: [
-              Icon(Icons.cloudy_snowing),
-              SizedBox(
-                width: 10,
+    return Row(children: [
+      if (isEdit) Icon(Icons.home),
+      Flexible(
+        flex: 1,
+        child: Stack(children: [
+          Container(
+            // width: double.infinity,
+            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
+            decoration: BoxDecoration(
+                border: Border.all(
+                    width: 1,
+                    color: Color.fromARGB(255, 2, 2, 2),
+                    style: BorderStyle.solid),
+                borderRadius: BorderRadius.circular(10)),
+            height: 100,
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Hanoi",
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                      Text(
+                        "3/10    09:18",
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      )
+                    ],
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Row(children: [
+                        Icon(Icons.cloudy_snowing),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "22 C",
+                          style: TextStyle(fontWeight: FontWeight.w700),
+                        )
+                      ]),
+                      Text(
+                        "Cloud",
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      )
+                    ],
+                  ),
+                ]),
+          ),
+          if (isEdit)
+            Positioned(
+              top: 6,
+              right: 14,
+              child: Icon(
+                Icons.remove_circle,
+                size: 20,
               ),
-              Text(
-                "22 C",
-                style: TextStyle(fontWeight: FontWeight.w700),
-              )
-            ]),
-            Text(
-              "Cloud",
-              style: TextStyle(fontWeight: FontWeight.w600),
-            )
-          ],
-        )
-      ]),
-    );
+            ),
+        ]),
+      ),
+      if (isEdit)
+        Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Color.fromARGB(255, 160, 178, 207)),
+            padding: EdgeInsets.all(3),
+            child: Icon(Icons.drag_handle)),
+    ]);
   }
 }
 
@@ -246,7 +290,7 @@ class SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<SearchBar> {
   final TextEditingController _searchController = TextEditingController();
-
+  final bool isOpenMap;
   @override
   Widget build(BuildContext context) {
     return Row(
