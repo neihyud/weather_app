@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'location.dart';
+import 'package:weather_app/models/Weather.dart';
+import 'package:weather_app/network/WeatherApiClient.dart';
+import 'package:weather_app/widget/current_weather.dart';
+import 'package:weather_app/widget/daily_weather.dart';
+import 'package:weather_app/widget/hourly_weather.dart';
 
 void main() {
+  // WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -31,85 +36,108 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  // WeatherApiClient client = WeatherApiClient();
+  Weather weather = new Weather();
+  // Future<Weather> weather;
+  var isLoaded = false;
+
+  refresh() {
+    setState(() {});
+  }
+
+  Future<void> getData() async {
+    weather = await WeatherApiClient().getWeather();
+    print("weather2: ${weather.currentWeather?.temperature}");
+  }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   getData();
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          // title: ListTile(
-          //   title: Center(
-          //       child: Row(children: const [Text('Title'), Icon(Icons.bolt)])),
-          //   subtitle: const Center(child: Text('Subtitle')),
-          //   onTap: () {},
-          // ),
-          // elevation: ,
-          ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: const <Widget>[
-            DrawerHeader(child: Text("Weather")),
-            buildMenuItem()
-          ],
-        ),
-      ),
-      body: Container(
-        padding: EdgeInsets.all(16.0),
-        child: ListView(
-          scrollDirection: Axis.vertical,
-          children: const <Widget>[
-            infoForeCastCurrent(),
-            SizedBox(height: 10),
-            hourlyForeCast(),
-            SizedBox(height: 10),
-            dailyForeCast(),
-            SizedBox(height: 10),
-            infoForeCast()
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ignore: camel_case_types
-class infoForeCastCurrent extends StatelessWidget {
-  const infoForeCastCurrent({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 125,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Color.fromARGB(50, 56, 66, 82),
-      ),
-      child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text("Mua"),
-            Text(
-              "28 C",
-              style: TextStyle(fontSize: 60, fontWeight: FontWeight.w800),
+        appBar: AppBar(
+            // title: ListTile(
+            //   title: Center(
+            //       child: Row(children: const [Text('Title'), Icon(Icons.bolt)])),
+            //   subtitle: const Center(child: Text('Subtitle')),
+            //   onTap: () {},
+            // ),
+            // elevation: ,
             ),
-            Row(
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Nhiệt độ"),
-                SizedBox(width: 8),
-                Text("2C"),
-                SizedBox(width: 8),
-                Icon(Icons.arrow_drop_down),
-                Text("2C"),
-                SizedBox(width: 8),
-                Icon(Icons.arrow_drop_up),
-                Text("4C"),
-              ],
-            )
-          ]),
-    );
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: const <Widget>[
+              DrawerHeader(child: Text("Weather")),
+              buildMenuItem()
+            ],
+          ),
+        ),
+        body: FutureBuilder(
+          future: getData(),
+          builder: (context, snapshot) {
+            //       child: Text(
+            //         '${snapshot.error} occurred',
+            //         style: TextStyle(fontSize: 18),
+            //       ),
+            //     );
+            //   } else if (snapshot.hasData) {
+            //     print("have data");
+            //     return Container(
+            //       padding: EdgeInsets.all(16.0),
+            //       child: ListView(
+            //         scrollDirection: Axis.vertical,
+            //         children: <Widget>[
+            //           // infoForeCastCurrent(weather: weather),
+            //           currentWeather(
+            //               "${weather.currentWeather?.temperature}", "35", "54"),
+            //           SizedBox(height: 10),
+            //           // hourlyForeCast(),
+            //           hourlyWeather(weather),
+            //           SizedBox(height: 10),
+            //           // dailyForeCast(),
+            //           dailyWeather(weather),
+            //           SizedBox(height: 10),
+            //           infoForeCast(),
+            //         ],
+            //       ),
+            //     );
+            //   }
+            //   // else {
+            //   //   return Center(
+            //   //     child: CircularProgressIndicator(),
+            //   //   );
+            // } else
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return Container(
+              padding: EdgeInsets.all(16.0),
+              child: ListView(
+                scrollDirection: Axis.vertical,
+                children: <Widget>[
+                  // infoForeCastCurrent(weather: weather),
+                  currentWeather(
+                      "${weather.currentWeather?.temperature}", "35", "54"),
+                  SizedBox(height: 10),
+                  // hourlyForeCast(),
+                  hourlyWeather(weather),
+                  SizedBox(height: 10),
+                  // dailyForeCast(),
+                  dailyWeather(weather),
+                  SizedBox(height: 10),
+                  infoForeCast(),
+                ],
+              ),
+            );
+          },
+        ));
   }
 }
 
@@ -163,53 +191,6 @@ class infoForeCast extends StatelessWidget {
           child: const Text('Who scream'),
         ),
       ],
-    );
-  }
-}
-
-// ignore: camel_case_types
-class dailyForeCast extends StatelessWidget {
-  const dailyForeCast({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    List<String> daysFor = [
-      "Brazil",
-      "Nepal",
-      "India",
-      "China",
-      "USA",
-      "Canada",
-      "Brazil",
-    ];
-    return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Color.fromARGB(50, 56, 66, 82),
-        ),
-        child: Column(
-          children: daysFor.map((dayFor) {
-            return day();
-          }).toList(),
-        ));
-  }
-
-  Widget day() {
-    return Container(
-      padding: EdgeInsets.all(8.0),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text("Today"),
-        Icon(Icons.cloud),
-        Wrap(
-          spacing: 12.0,
-          children: [
-            Text("19 C"),
-            Text("29 C"),
-          ],
-        )
-      ]),
     );
   }
 }

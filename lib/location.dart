@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:reorderables/reorderables.dart';
 
 class LocationPage extends StatefulWidget {
   const LocationPage({super.key});
@@ -211,7 +210,7 @@ class _listLocationState extends State<listLocation> {
   Widget build(BuildContext context) {
     return Expanded(
       child: ReorderableListView(
-          buildDefaultDragHandles: false,
+          // buildDefaultDragHandles: false,
           onReorder: (int oldIndex, int newIndex) {
             setState(() {
               if (oldIndex < newIndex) {
@@ -306,11 +305,15 @@ class _listLocationState extends State<listLocation> {
       ),
       if (widget.isEdit)
         Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: Color.fromARGB(255, 160, 178, 207)),
-            padding: EdgeInsets.all(3),
-            child: Icon(Icons.drag_handle)),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Color.fromARGB(255, 160, 178, 207)),
+          padding: EdgeInsets.all(3),
+          child: ReorderableDragStartListener(
+            index: index,
+            child: const Icon(Icons.drag_handle),
+          ),
+        ),
     ]);
   }
 }
