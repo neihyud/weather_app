@@ -1,33 +1,3 @@
-// class Weather {
-//   var cityName;
-//   var icon;
-//   var condition;
-//   var temp;
-//   var wind;
-//   var humidity;
-//   var wind_dir;
-//   var gust;
-//   var uv;
-//   var pressure;
-//   var pricipe;
-//   var last_update;
-
-//   Weather({
-//     required this.cityName,
-//     required this.condition,
-//     required this.gust,
-//     required this.humidity,
-//     required this.icon,
-//     required this.last_update,
-//     required this.pressure,
-//     required this.pricipe,
-//     required this.temp,
-//     required this.uv,
-//     required this.wind_dir,
-//     required this.wind
-//   });
-// }
-
 class Weather {
   double? latitude;
   double? longitude;
@@ -114,14 +84,15 @@ class Daily {
   List<double>? precipitationHours;
   List<double>? windspeed10MMax;
 
-  Daily(
-      {this.time,
-      this.weathercode,
-      this.temperature2MMax,
-      this.temperature2MMin,
-      this.precipitationSum,
-      this.precipitationHours,
-      this.windspeed10MMax});
+  Daily({
+    this.time,
+    this.weathercode,
+    this.temperature2MMax,
+    this.temperature2MMin,
+    this.precipitationSum,
+    this.precipitationHours,
+    this.windspeed10MMax,
+  });
 
   Daily.fromJson(Map<String, dynamic> json) {
     time = json["time"] == null ? null : List<String>.from(json["time"]);
@@ -168,6 +139,7 @@ class Daily {
     if (windspeed10MMax != null) {
       _data["windspeed_10m_max"] = windspeed10MMax;
     }
+
     return _data;
   }
 }
@@ -181,14 +153,15 @@ class DailyUnits {
   String? precipitationHours;
   String? windspeed10MMax;
 
-  DailyUnits(
-      {this.time,
-      this.weathercode,
-      this.temperature2MMax,
-      this.temperature2MMin,
-      this.precipitationSum,
-      this.precipitationHours,
-      this.windspeed10MMax});
+  DailyUnits({
+    this.time,
+    this.weathercode,
+    this.temperature2MMax,
+    this.temperature2MMin,
+    this.precipitationSum,
+    this.precipitationHours,
+    this.windspeed10MMax,
+  });
 
   DailyUnits.fromJson(Map<String, dynamic> json) {
     time = json["time"];
@@ -209,6 +182,7 @@ class DailyUnits {
     _data["precipitation_sum"] = precipitationSum;
     _data["precipitation_hours"] = precipitationHours;
     _data["windspeed_10m_max"] = windspeed10MMax;
+
     return _data;
   }
 }
@@ -222,6 +196,8 @@ class Hourly {
   List<int>? cloudcover;
   List<double>? temperature80M;
   List<double>? uvIndex;
+  List<int>? humidity;
+  List<double>? windspeed_10m;
 
   Hourly(
       {this.time,
@@ -231,7 +207,9 @@ class Hourly {
       this.weathercode,
       this.cloudcover,
       this.temperature80M,
-      this.uvIndex});
+      this.uvIndex,
+      this.humidity,
+      this.windspeed_10m});
 
   Hourly.fromJson(Map<String, dynamic> json) {
     time = json["time"] == null ? null : List<String>.from(json["time"]);
@@ -251,9 +229,15 @@ class Hourly {
         json["cloudcover"] == null ? null : List<int>.from(json["cloudcover"]);
     temperature80M = json["temperature_80m"] == null
         ? null
-        : List<double>.from(json["temperature_80m"]);
+        : List<double>.from(json["temperature_80m"]); 
     uvIndex =
         json["uv_index"] == null ? null : List<double>.from(json["uv_index"]);
+    humidity = json["relativehumidity_2m"] == null
+        ? null
+        : List<int>.from(json["relativehumidity_2m"]);
+    windspeed_10m = json["windspeed_10m"] == null
+        ? null
+        : List<double>.from(json["windspeed_10m"]);
   }
 
   Map<String, dynamic> toJson() {
@@ -282,6 +266,12 @@ class Hourly {
     if (uvIndex != null) {
       _data["uv_index"] = uvIndex;
     }
+    if (humidity != null) {
+      _data["relativehumidity_2m"] = humidity;
+    }
+    if (windspeed_10m != null) {
+      _data["cloudcover"] = windspeed_10m;
+    }
     return _data;
   }
 }
@@ -295,6 +285,7 @@ class HourlyUnits {
   String? cloudcover;
   String? temperature80M;
   String? uvIndex;
+  String? windspeed_10m;
 
   HourlyUnits(
       {this.time,
@@ -304,7 +295,8 @@ class HourlyUnits {
       this.weathercode,
       this.cloudcover,
       this.temperature80M,
-      this.uvIndex});
+      this.uvIndex,
+      this.windspeed_10m});
 
   HourlyUnits.fromJson(Map<String, dynamic> json) {
     time = json["time"];
@@ -315,6 +307,7 @@ class HourlyUnits {
     cloudcover = json["cloudcover"];
     temperature80M = json["temperature_80m"];
     uvIndex = json["uv_index"];
+    windspeed_10m = json["windspeed_10m"];
   }
 
   Map<String, dynamic> toJson() {
@@ -327,6 +320,7 @@ class HourlyUnits {
     _data["cloudcover"] = cloudcover;
     _data["temperature_80m"] = temperature80M;
     _data["uv_index"] = uvIndex;
+    _data["windspeed_10m"] = windspeed_10m;
     return _data;
   }
 }

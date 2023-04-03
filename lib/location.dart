@@ -225,12 +225,13 @@ class _listLocationState extends State<listLocation> {
               //   return day();
               // }).toList(),
               [
-            for (int index = 0; index < daysFor.length; index += 1) day(index)
+            for (int index = 0; index < daysFor.length; index += 1)
+              day(index, daysFor[index])
           ]),
     );
   }
 
-  Widget day(index) {
+  Widget day(int index, String day) {
     return Row(key: Key('$index'), children: [
       if (widget.isEdit) Icon(Icons.home),
       Flexible(
@@ -256,7 +257,7 @@ class _listLocationState extends State<listLocation> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Hanoi",
+                        "${day}",
                         style: TextStyle(fontWeight: FontWeight.w700),
                       ),
                       Text(

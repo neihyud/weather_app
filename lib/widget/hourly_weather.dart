@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:weather_app/models/Weather.dart';
+import 'package:weather_app/widget/icon_weather.dart';
 
 Widget hourlyWeather(Weather weather) {
-  List<String> countries = [
-    "13:00",
-    "14:00",
-    "15:00",
-    "16:00",
-    "17:00",
-    "18:00",
-    "19:00",
-    "20:00",
-    "21:00",
-  ];
+  int idx_hour = DateTime.now().hour;
+  print("current_time ${idx_hour}");
+
+  var len = weather.hourly?.time?.length;
+
+  if (len != null) {
+    len = len - idx_hour;
+  }
+
   return Container(
       height: 150,
       decoration: BoxDecoration(
@@ -20,19 +19,26 @@ Widget hourlyWeather(Weather weather) {
         color: Color.fromARGB(50, 56, 66, 82),
       ),
       child: ListView.builder(
-          // itemCount: 7,
+          itemCount: len,
           scrollDirection: Axis.horizontal,
           itemBuilder: (BuildContext context, index) {
+            String? datetimeString = weather.hourly?.time?[index + idx_hour];
+            DateTime datetime = DateTime.parse(datetimeString!);
+
+            String hourString = "${datetime.hour}".padLeft(2, '0');
+            String minuteString = "${datetime.minute}".padLeft(2, '0');
+
+            String current_time = "${hourString}:${minuteString}";
+            // print("hour ${hour}");
             return box(
-              countries[index % 7],
-              Colors.transparent,
-              "${weather.hourly?.time?[index]}",
-              "${weather.hourly?.temperature2M?[index]}",
-            );
+                Colors.transparent,
+                "${current_time}",
+                "${weather.hourly?.temperature2M?[index + idx_hour]}",
+                "${weather.hourly?.weathercode?[index + idx_hour]}");
           }));
 }
 
-Widget box(String title, Color backgroundcolor, String time, String tmp) {
+Widget box(Color backgroundcolor, String time, String tmp, String weathercode) {
   return Container(
       margin: EdgeInsets.all(10),
       color: backgroundcolor,
@@ -40,14 +46,16 @@ Widget box(String title, Color backgroundcolor, String time, String tmp) {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: TextStyle(color: Colors.white, fontSize: 18)),
+          Text(time, style: TextStyle(color: Colors.white, fontSize: 18)),
           // Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
-          Icon(
-            Icons.cloudy_snowing,
-            size: 45,
-          ),
+          // Icon(
+          //   Icons.cloudy_snowing,
+          //   size: 45,
+          // )
+          getIcon(weathercode, size: 45),
           // Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
-          Text('${tmp}°C', style: TextStyle(color: Colors.white, fontSize: 18))
+          Text('${double.parse(tmp).round()}°',
+              style: TextStyle(color: Colors.white, fontSize: 18))
         ],
       ));
 }
