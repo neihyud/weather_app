@@ -75,23 +75,31 @@ class Hourly {
 
   Hourly.fromJson(Map<String, dynamic> json) {
     time = json["time"] == null ? null : List<String>.from(json["time"]);
-    pm10 = json["pm10"] == null ? null : List<double>.from(json["pm10"]);
-    pm25 = json["pm2_5"] == null ? null : List<double>.from(json["pm2_5"]);
+    // pm10 = json["pm10"] == null ? null : List<double>.from(json["pm10"]);
+
+    pm10 = json["pm10"] == null
+        ? null
+        : (json["pm10"] as List<dynamic>).cast<double>();
+
+    // pm25 = json["pm2_5"] == null ? null : List<double>.from(json["pm2_5"]);
+
+    pm25 = json["pm2_5"] == null ? null : (json["pm10"] as List<dynamic>).cast<double>();
+
     carbonMonoxide = json["carbon_monoxide"] == null
         ? null
-        : List<double>.from(json["carbon_monoxide"]);
+        : (json["carbon_monoxide"] as List<dynamic>).cast<double>();
     nitrogenDioxide = json["nitrogen_dioxide"] == null
         ? null
-        : List<double>.from(json["nitrogen_dioxide"]);
+        : (json["nitrogen_dioxide"] as List<dynamic>).cast<double>();
     sulphurDioxide = json["sulphur_dioxide"] == null
         ? null
-        : List<double>.from(json["sulphur_dioxide"]);
-    ozone = json["ozone"] == null ? null : List<double>.from(json["ozone"]);
-    dust = json["dust"] == null ? null : List<double>.from(json["dust"]);
+        : (json["sulphur_dioxide"] as List<dynamic>).cast<double>();
+    ozone = json["ozone"] == null ? null : (json["ozone"] as List<dynamic>).cast<double>();
+    dust = json["dust"] == null ? null : (json["dust"] as List<dynamic>).cast<double>();
     uvIndex =
-        json["uv_index"] == null ? null : List<double>.from(json["uv_index"]);
+        json["uv_index"] == null ? null : (json["uv_index"] as List<dynamic>).cast<double>();
     ammonia =
-        json["ammonia"] == null ? null : List<dynamic>.from(json["ammonia"]);
+        json["ammonia"] == null ? null :(json["ammonia"] as List<dynamic>).cast<double>();
   }
 
   Map<String, dynamic> toJson() {

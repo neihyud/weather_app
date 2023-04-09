@@ -4,6 +4,8 @@ https://api.open-meteo.com/v1/forecast?latitude=21.02&longitude=105.84&hourly=te
 https://air-quality-api.open-meteo.com/v1/air-quality?latitude=21.02&longitude=105.84&hourly=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone,dust,uv_index,ammonia
 
 
+AIzaSyAa4oEMOR2_Rz5aLaC76a8DWHPAbIge5V4
+
 
 import 'package:api_demo/models/post.dart';
 import 'package:http/http.dart' as http;

@@ -1,5 +1,12 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:weather_app/widget/address_search.dart';
+import 'package:weather_app/widget/popular_location.dart';
+import 'package:weather_app/widget/list_location.dart';
+import 'package:weather_app/network/PlaceService.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weather_app/database/test2.dart';
+
 
 class LocationPage extends StatefulWidget {
   const LocationPage({super.key});
@@ -9,8 +16,12 @@ class LocationPage extends StatefulWidget {
 }
 
 class _PositionPageState extends State<LocationPage> {
+  
   bool _isEdit = false;
   bool _isOpenMap = false;
+
+  DatabaseHelper db = DatabaseHelper();
+  List<Map<String, dynamic>> data = await db.getData("my_table");
 
   openMap() {
     setState(() {
@@ -51,14 +62,6 @@ class _PositionPageState extends State<LocationPage> {
       body: Container(
           width: double.infinity,
           height: double.infinity,
-          // decoration: BoxDecoration(
-          //   image: DecorationImage(
-          //     image: AssetImage("assets/img/location_background.png"),
-          //     fit: BoxFit.cover,
-          //   ),
-          //   // color: Color(0xff384252),
-          //   // color: Color.fromARGB(255, 0, 0, 0),
-          // ),
           padding: EdgeInsets.all(16.0),
           child: Column(
             children: [
@@ -72,250 +75,10 @@ class _PositionPageState extends State<LocationPage> {
                   isEdit: _isEdit,
                 )
               else
-                popularLocation(),
+                locationPopulation(),
             ],
           )),
     );
-  }
-}
-
-// ignore: camel_case_types
-class popularLocation extends StatelessWidget {
-  const popularLocation({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    List<String> location = [
-      "Hanoi",
-      "Nepal",
-      "India",
-      "China",
-      "USA",
-      "Canada",
-      "Brazil",
-    ];
-    return Expanded(
-      flex: 1,
-      child: Column(
-        children: [
-          SizedBox(height: 10),
-          Row(
-            children: [
-              Text(
-                "VỊ TRÍ XUNG QUANH",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  // color: Colors.white
-                ),
-              ),
-              Icon(
-                Icons.location_pin,
-                // color: Colors.white,
-              )
-            ],
-          ),
-          SizedBox(height: 10),
-          Container(
-              width: MediaQuery.of(context).size.width,
-              height: 38,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                  // color: Color.fromARGB(255, 201, 149, 82),
-                  border: Border.all(
-                      color: Colors.black12,
-                      width: 1.0,
-                      style: BorderStyle.solid),
-                  borderRadius: BorderRadius.circular(100)),
-              padding: EdgeInsets.symmetric(vertical: 0.0),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: new Icon(Icons.location_pin),
-                    alignment: Alignment.center,
-                    padding: new EdgeInsets.all(0.0),
-                    onPressed: () {},
-                  ),
-                  Text("Cho phép Quyền vị trí",
-                      style: TextStyle(fontWeight: FontWeight.w600))
-                ],
-              )),
-          SizedBox(height: 10),
-          Row(
-            children: [
-              Text("CÁC VỊ TRÍ PHỔ BIẾN",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-              Icon(Icons.local_fire_department)
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Flexible(
-            child: Container(
-              decoration: BoxDecoration(
-                  border: Border.all(
-                      color: Colors.black12,
-                      width: 1.0,
-                      style: BorderStyle.solid),
-                  borderRadius: BorderRadius.circular(10)),
-              child: GridView.count(
-                  childAspectRatio: (1 / .3),
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  // primary: false,
-                  // padding: const EdgeInsets.all(20),
-                  // crossAxisSpacing: 10,
-                  mainAxisSpacing: 0,
-                  crossAxisCount: 2,
-                  children: location.map((e) {
-                    return day();
-                  }).toList()),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget day() {
-    return const ListTile(
-      title: Text("Hanoi"),
-      subtitle: Text("Hanoi/VietName"),
-    );
-  }
-}
-
-// ignore: camel_case_types
-class listLocation extends StatefulWidget {
-  final bool isEdit;
-
-  const listLocation({super.key, required this.isEdit});
-
-  @override
-  State<listLocation> createState() => _listLocationState();
-}
-
-// ignore: camel_case_types
-class _listLocationState extends State<listLocation> {
-  List<String> daysFor = [
-    "Brazil",
-    "Nepal",
-    "India",
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: ReorderableListView(
-          // buildDefaultDragHandles: false,
-          onReorder: (int oldIndex, int newIndex) {
-            setState(() {
-              if (oldIndex < newIndex) {
-                newIndex -= 1;
-              }
-              final String item = daysFor.removeAt(oldIndex);
-              daysFor.insert(newIndex, item);
-            });
-          },
-          children:
-              // daysFor.map((dayFor) {
-              //   return day();
-              // }).toList(),
-              [
-            for (int index = 0; index < daysFor.length; index += 1)
-              day(index, daysFor[index])
-          ]),
-    );
-  }
-
-  Widget day(int index, String day) {
-    return Row(key: Key('$index'), children: [
-      if (widget.isEdit) Icon(Icons.home),
-      Flexible(
-        flex: 1,
-        child: Stack(children: [
-          Container(
-            margin: widget.isEdit
-                ? EdgeInsets.symmetric(horizontal: 16, vertical: 8)
-                : EdgeInsets.symmetric(vertical: 8),
-            padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
-            decoration: BoxDecoration(
-                border: Border.all(
-                    width: 1,
-                    color: Color.fromARGB(255, 2, 2, 2),
-                    style: BorderStyle.solid),
-                borderRadius: BorderRadius.circular(10)),
-            height: 100,
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "${day}",
-                        style: TextStyle(fontWeight: FontWeight.w700),
-                      ),
-                      Text(
-                        "3/10    09:18",
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      )
-                    ],
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Row(children: [
-                        Icon(Icons.cloudy_snowing),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "22 C",
-                          style: TextStyle(fontWeight: FontWeight.w700),
-                        )
-                      ]),
-                      Text(
-                        "Cloud",
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      )
-                    ],
-                  ),
-                ]),
-          ),
-          if (widget.isEdit)
-            Positioned(
-              top: 6,
-              right: 14,
-              child: GestureDetector(
-                onTap: () {
-                  print("delete location");
-                },
-                child: Icon(
-                  Icons.remove_circle,
-                  size: 20,
-                ),
-              ),
-            ),
-        ]),
-      ),
-      if (widget.isEdit)
-        Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: Color.fromARGB(255, 160, 178, 207)),
-          padding: EdgeInsets.all(3),
-          child: ReorderableDragStartListener(
-            index: index,
-            child: const Icon(Icons.drag_handle),
-          ),
-        ),
-    ]);
   }
 }
 
@@ -377,6 +140,20 @@ class _SearchBarState extends State<SearchBar> {
                 },
               ),
             ),
+            onTap: () async {
+              final Suggestion? result = await showSearch(
+                context: context,
+                delegate: AddressSearch(),
+              );
+              // This will change the text displayed in the TextField
+              if (result != null) {
+                final placeDetails = await PlaceApiProvider()
+                    .getPlaceDetailFromId(result.placeId);
+
+                print("placeDeatils $placeDetails");
+                setState(() {});
+              }
+            },
           ),
         )
       ],
