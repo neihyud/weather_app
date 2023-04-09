@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:weather_app/models/AirQuality.dart';
+import 'database/database_helper.dart';
 import 'location.dart';
 import 'package:weather_app/models/Weather.dart';
 import 'package:weather_app/network/WeatherApiClient.dart';
@@ -8,7 +9,11 @@ import 'package:weather_app/widget/daily_weather.dart';
 import 'package:weather_app/widget/hourly_weather.dart';
 import 'package:weather_app/widget/air_quality.dart';
 
-void main() {
+final dbHelper = DatabaseHelper();
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dbHelper.init();
   runApp(const MyApp());
 }
 

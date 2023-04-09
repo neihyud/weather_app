@@ -7,7 +7,8 @@ import '../models/Geometry.dart';
 class listLocation extends StatefulWidget {
   final bool isEdit;
 
-  const listLocation({super.key, required this.isEdit});
+  final List<Map<String, dynamic>> data;
+  const listLocation({super.key, required this.isEdit, required this.data});
 
   @override
   State<listLocation> createState() => _listLocationState();
@@ -15,7 +16,7 @@ class listLocation extends StatefulWidget {
 
 // ignore: camel_case_types
 class _listLocationState extends State<listLocation> {
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  // final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   late Future<List<Geometry>> _geo;
 
   List<String> daysFor = [
@@ -35,6 +36,7 @@ class _listLocationState extends State<listLocation> {
 
   @override
   Widget build(BuildContext context) {
+    print("data $widget.data");
     return Expanded(
       child: ReorderableListView(
           // buildDefaultDragHandles: false,

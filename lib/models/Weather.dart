@@ -229,7 +229,7 @@ class Hourly {
         json["cloudcover"] == null ? null : List<int>.from(json["cloudcover"]);
     temperature80M = json["temperature_80m"] == null
         ? null
-        : List<double>.from(json["temperature_80m"]); 
+        : (json["temperature_80m"] as List<dynamic>).cast<double>();
     uvIndex =
         json["uv_index"] == null ? null : List<double>.from(json["uv_index"]);
     humidity = json["relativehumidity_2m"] == null

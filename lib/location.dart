@@ -4,9 +4,10 @@ import 'package:weather_app/widget/popular_location.dart';
 import 'package:weather_app/widget/list_location.dart';
 import 'package:weather_app/network/PlaceService.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:weather_app/database/test2.dart';
+import 'database/database_helper.dart';
+import 'main.dart';
 
+List<Map<String, dynamic>> data = [];
 
 class LocationPage extends StatefulWidget {
   const LocationPage({super.key});
@@ -16,17 +17,25 @@ class LocationPage extends StatefulWidget {
 }
 
 class _PositionPageState extends State<LocationPage> {
-  
   bool _isEdit = false;
   bool _isOpenMap = false;
-
-  DatabaseHelper db = DatabaseHelper();
-  List<Map<String, dynamic>> data = await db.getData("my_table");
 
   openMap() {
     setState(() {
       _isOpenMap = !_isOpenMap;
     });
+  }
+
+  void _requestSqlDataAsync() async {
+    data = await dbHelper
+        .queryAllRows(); // call API/await function to get the data
+    print("Data $data");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _requestSqlDataAsync();
   }
 
   @override
@@ -71,9 +80,7 @@ class _PositionPageState extends State<LocationPage> {
                 isOpenMap: _isOpenMap,
               ),
               if (!_isOpenMap)
-                listLocation(
-                  isEdit: _isEdit,
-                )
+                listLocation(isEdit: _isEdit, data: data)
               else
                 locationPopulation(),
             ],
@@ -150,8 +157,20 @@ class _SearchBarState extends State<SearchBar> {
                 final placeDetails = await PlaceApiProvider()
                     .getPlaceDetailFromId(result.placeId);
 
-                print("placeDeatils $placeDetails");
-                setState(() {});
+                print("placeDeatils $data");
+
+                var location = placeDetails?.result?.geometry?.location;
+
+                Map<String, dynamic> row = {
+                  DatabaseHelper.columnLat: location?.lat,
+                  DatabaseHelper.columnLng: location?.lng
+                };
+
+                final id = await dbHelper.insert(row);
+
+                setState(() {
+                  data = [...data, row];
+                });
               }
             },
           ),
