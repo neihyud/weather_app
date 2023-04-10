@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/Geometry.dart';
+import '../models/Weather.dart';
+import 'description_code.dart';
+import 'icon_weather.dart';
 
 // ignore: camel_case_types
 class listLocation extends StatefulWidget {
   final bool isEdit;
-
-  final List<Map<String, dynamic>> data;
+  final List<Weather> data;
   const listLocation({super.key, required this.isEdit, required this.data});
 
   @override
@@ -16,27 +18,15 @@ class listLocation extends StatefulWidget {
 
 // ignore: camel_case_types
 class _listLocationState extends State<listLocation> {
-  // final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  late Future<List<Geometry>> _geo;
-
   List<String> daysFor = [
     "Brazil",
     "Nepal",
     "India",
   ];
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _geo = _prefs.then((SharedPreferences prefs) {
-  //     // return ""prefs.getStringList("geo");
-  //     return null;
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
-    print("data $widget.data");
+    print("dataListLocationSTate: ${widget.data.length}");
     return Expanded(
       child: ReorderableListView(
           // buildDefaultDragHandles: false,
@@ -45,22 +35,29 @@ class _listLocationState extends State<listLocation> {
               if (oldIndex < newIndex) {
                 newIndex -= 1;
               }
-              final String item = daysFor.removeAt(oldIndex);
-              daysFor.insert(newIndex, item);
+              final Weather item = widget.data.removeAt(oldIndex);
+              widget.data.insert(newIndex, item);
             });
           },
-          children:
-              // daysFor.map((dayFor) {
-              //   return day();
-              // }).toList(),
-              [
-            for (int index = 0; index < daysFor.length; index += 1)
-              day(index, daysFor[index])
+          children: [
+            for (int index = 0; index < widget.data.length; index += 1)
+              day(index, widget.data[index])
           ]),
     );
   }
 
-  Widget day(int index, String day) {
+  Widget day(int index, Weather forecast) {
+    var temp = forecast.currentWeather?.temperature;
+    var time = forecast.currentWeather?.time;
+    var weatherCode = forecast.currentWeather?.weathercode;
+    DateTime datetime = DateTime.parse(time!);
+
+    var day = "${datetime.day}".padLeft(2, '0');
+    var month = "${datetime.month}".padLeft(2, '0');
+
+    var hour = "${datetime.hour}".padLeft(2, '0');
+    var minute = "${datetime.minute}".padLeft(2, '0');
+
     return Row(key: Key('$index'), children: [
       if (widget.isEdit) Icon(Icons.home),
       Flexible(
@@ -86,11 +83,11 @@ class _listLocationState extends State<listLocation> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${day}",
+                        "Hanoi",
                         style: TextStyle(fontWeight: FontWeight.w700),
                       ),
                       Text(
-                        "3/10    09:18",
+                        "$day/$month    $hour:$minute",
                         style: TextStyle(fontWeight: FontWeight.w600),
                       )
                     ],
@@ -100,19 +97,17 @@ class _listLocationState extends State<listLocation> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Row(children: [
-                        Icon(Icons.cloudy_snowing),
+                        // Icon(Icons.cloudy_snowing),
+                        getIcon(weatherCode.toString()),
                         const SizedBox(
                           width: 10,
                         ),
-                        const Text(
-                          "22 C",
+                        Text(
+                          "${temp?.round()}  °C",
                           style: TextStyle(fontWeight: FontWeight.w700),
                         )
                       ]),
-                      Text(
-                        "Cloud",
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      )
+                      getDesCode(weatherCode.toString())
                     ],
                   ),
                 ]),

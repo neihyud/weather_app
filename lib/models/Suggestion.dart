@@ -1,73 +1,71 @@
 class Suggestion {
-  List<Predictions>? predictions;
+  String? oldName;
+  String? country;
+  String? city;
+  String? lon;
+  String? lat;
+  String? formatted;
+  Timezone? timezone;
+  String? placeId;
 
-  Suggestion({this.predictions});
+  Suggestion(
+      {this.oldName,
+      this.country,
+      this.city,
+      this.lon,
+      this.lat,
+      this.formatted,
+      this.timezone,
+      this.placeId});
 
   Suggestion.fromJson(Map<String, dynamic> json) {
-    predictions = json["predictions"] == null
-        ? null
-        : (json["predictions"] as List)
-            .map((e) => Predictions.fromJson(e))
-            .toList();
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    if (predictions != null) {
-      _data["predictions"] = predictions?.map((e) => e.toJson()).toList();
-    }
-    return _data;
-  }
-}
-
-class Predictions {
-  String? description;
-  String? placeId;
-  String? reference;
-  StructuredFormatting? structuredFormatting;
-
-  Predictions(
-      {this.description,
-      this.placeId,
-      this.reference,
-      this.structuredFormatting});
-
-  Predictions.fromJson(Map<String, dynamic> json) {
-    description = json["description"];
+    oldName = json["old_name"];
+    country = json["country"];
+    city = json["city"];
+    lon = json["lon"];
+    lat = json["lat"];
+    formatted = json["formatted"];
+    timezone =
+        json["timezone"] == null ? null : Timezone.fromJson(json["timezone"]);
     placeId = json["place_id"];
-    reference = json["reference"];
-    structuredFormatting = json["structured_formatting"] == null
-        ? null
-        : StructuredFormatting.fromJson(json["structured_formatting"]);
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["description"] = description;
-    _data["place_id"] = placeId;
-    _data["reference"] = reference;
-    if (structuredFormatting != null) {
-      _data["structured_formatting"] = structuredFormatting?.toJson();
+    _data["old_name"] = oldName;
+    _data["country"] = country;
+    _data["city"] = city;
+    _data["lon"] = lon;
+    _data["lat"] = lat;
+    _data["formatted"] = formatted;
+    if (timezone != null) {
+      _data["timezone"] = timezone?.toJson();
     }
+    _data["place_id"] = placeId;
     return _data;
   }
+
+  // @override
+  // String toString() {
+  //   return 'Suggestion(description: $formatted, placeId: $placeId, lat: $lat, lng: $lon)';
+  // }
 }
 
-class StructuredFormatting {
-  String? mainText;
-  String? secondaryText;
+class Timezone {
+  String? name;
+  String? offsetStd;
 
-  StructuredFormatting({this.mainText, this.secondaryText});
+  Timezone({this.name, this.offsetStd});
 
-  StructuredFormatting.fromJson(Map<String, dynamic> json) {
-    mainText = json["main_text"];
-    secondaryText = json["secondary_text"];
+  Timezone.fromJson(Map<String, dynamic> json) {
+    name = json["name"];
+    offsetStd = json["offset_STD"];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["main_text"] = mainText;
-    _data["secondary_text"] = secondaryText;
+    _data["name"] = name;
+    _data["offset_STD"] = offsetStd;
     return _data;
   }
 }

@@ -31,4 +31,22 @@ class WeatherApiClient {
       throw Exception('Failed to load Weather');
     }
   }
+
+//
+  Future<Weather> getWeatherLocation(Map<String, dynamic> data) async {
+    String lat = data.values.elementAt(1);
+    String lng = data.values.elementAt(2);
+    String urlWeather2 =
+        "https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&hourly=temperature_2m,apparent_temperature,precipitation,relativehumidity_2m,windspeed_10m,weathercode,cloudcover,temperature_80m,uv_index&models=best_match&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_hours,windspeed_10m_max&current_weather=true&timezone=Asia%2FBangkok";
+
+    final response = await http.get(Uri.parse(urlWeather2));
+
+    print("urlWeather2 $urlWeather2");
+
+    if (response.statusCode == 200) {
+      return Weather.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load Weather');
+    }
+  }
 }

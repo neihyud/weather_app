@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:weather_app/models/AirQuality.dart';
 import 'database/database_helper.dart';
 import 'location.dart';
@@ -14,6 +15,7 @@ final dbHelper = DatabaseHelper();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dbHelper.init();
+  await dotenv.load(fileName: "lib/.env");
   runApp(const MyApp());
 }
 

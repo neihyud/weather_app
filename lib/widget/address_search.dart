@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// import '../models/Suggestion.dart';
 import '../network/PlaceService.dart';
 import 'package:http/http.dart' as http;
 
@@ -10,7 +11,7 @@ class AddressSearch extends SearchDelegate<Suggestion> {
     return [
       IconButton(
         tooltip: 'Clear',
-        icon: Icon(Icons.clear),
+        icon: const Icon(Icons.clear),
         onPressed: () {
           query = '';
         },
@@ -27,18 +28,24 @@ class AddressSearch extends SearchDelegate<Suggestion> {
               query, Localizations.localeOf(context).languageCode),
       builder: (context, snapshot) => query == ''
           ? Container(
-              padding: EdgeInsets.all(16.0),
-              child: Text('Enter your address'),
+              padding: const EdgeInsets.all(16.0),
+              child: const Text('Enter your address'),
             )
           : snapshot.hasData
               ? ListView.builder(
-                  itemBuilder: (context, index) => ListTile(
-                    title:
-                        Text((snapshot.data?[index] as Suggestion).description),
-                    onTap: () {
-                      close(context, snapshot.data?[index] as Suggestion);
-                    },
-                  ),
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(
+                          // (snapshot.data?[index]?['properties'])['formatted']),
+                          "${(snapshot.data?[index] as Suggestion).formatted}"),
+                      onTap: () {
+                        close(
+                            context,
+                            // snapshot.data?[index]?['properties'] as Suggestion);
+                            snapshot.data?[index] as Suggestion);
+                      },
+                    );
+                  },
                   itemCount: snapshot.data?.length,
                 )
               : Container(child: Text('Loading...')),
@@ -56,7 +63,6 @@ class AddressSearch extends SearchDelegate<Suggestion> {
         // close(context, result);
       },
     );
-    // throw UnimplementedError();
   }
 
   @override
@@ -64,7 +70,5 @@ class AddressSearch extends SearchDelegate<Suggestion> {
     return Container(
       child: Text('Empty'),
     );
-
-    throw UnimplementedError();
   }
 }

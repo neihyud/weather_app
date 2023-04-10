@@ -11,53 +11,53 @@ Widget dailyWeather(Weather weather) {
     // height: 500,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(10),
-      color: Color.fromARGB(50, 56, 66, 82),
+      color: const Color.fromARGB(50, 56, 66, 82),
     ),
-    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
     child: ListView.builder(
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: 7,
         itemBuilder: (BuildContext context, index) {
           String? dateTime = weather.daily?.time?[index];
-          DateTime datetime = DateTime.parse(dateTime!);
+          DateTime daytime = DateTime.parse(dateTime!);
 
-          String weekday = "${datetime.weekday}";
+          String weekday = "${daytime.weekday}";
 
-          String current_weekday = "";
+          String currentWeekday = "";
 
           switch (weekday) {
             case "1":
-              current_weekday = 'Monday';
+              currentWeekday = 'Monday';
               break;
             case "2":
-              current_weekday = 'Tuesday';
+              currentWeekday = 'Tuesday';
               break;
             case "3":
-              current_weekday = 'Wednesday';
+              currentWeekday = 'Wednesday';
               break;
             case "4":
-              current_weekday = 'Thursday';
+              currentWeekday = 'Thursday';
               break;
             case "5":
-              current_weekday = 'Friday';
+              currentWeekday = 'Friday';
               break;
             case "6":
-              current_weekday = 'Saturday';
+              currentWeekday = 'Saturday';
               break;
             case "7":
-              current_weekday = 'Sunday';
+              currentWeekday = 'Sunday';
               break;
 
             default:
-              current_weekday = 'Err';
+              currentWeekday = 'Err';
           }
           if (index == 0) {
-            current_weekday = "Today";
+            currentWeekday = "Today";
           }
 
           return day(
-            "${current_weekday}",
+            currentWeekday,
             "${weather.daily?.weathercode?[index]}",
             "${weather.daily?.temperature2MMin?[index]}",
             "${weather.daily?.temperature2MMax?[index]}",
@@ -72,8 +72,8 @@ Widget day(String weekday, String code, String temp_min, String temp_max) {
     child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       SizedBox(
         width: 100,
-        child: Text("${weekday}",
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
+        child: Text(weekday,
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
       ),
       getIcon(code),
       Wrap(
@@ -84,9 +84,9 @@ Widget day(String weekday, String code, String temp_min, String temp_max) {
               "${double.parse(temp_min).round()}°",
               style: TextStyle(fontSize: 20),
             ),
-            Text("  /  ", style: TextStyle(fontSize: 20)),
+            const Text("  /  ", style: TextStyle(fontSize: 20)),
             Text("${double.parse(temp_max).round()}°",
-                style: TextStyle(
+                style: const TextStyle(
                     fontSize: 20, color: Color.fromARGB(150, 0, 0, 0))),
           ]),
         ],

@@ -4,7 +4,6 @@ import 'package:weather_app/widget/icon_weather.dart';
 
 Widget hourlyWeather(Weather weather) {
   int idx_hour = DateTime.now().hour;
-  print("current_time ${idx_hour}");
 
   var len = weather.hourly?.time?.length;
 
@@ -29,7 +28,7 @@ Widget hourlyWeather(Weather weather) {
             String minuteString = "${datetime.minute}".padLeft(2, '0');
 
             String current_time = "${hourString}:${minuteString}";
-            // print("hour ${hour}");
+
             return box(
                 Colors.transparent,
                 "${current_time}",
@@ -47,13 +46,9 @@ Widget box(Color backgroundcolor, String time, String tmp, String weathercode) {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(time, style: TextStyle(color: Colors.white, fontSize: 18)),
-          // Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
-          // Icon(
-          //   Icons.cloudy_snowing,
-          //   size: 45,
-          // )
+
           getIcon(weathercode, size: 45),
-          // Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
+
           Text('${double.parse(tmp).round()}°',
               style: TextStyle(color: Colors.white, fontSize: 18))
         ],

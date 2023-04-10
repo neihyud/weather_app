@@ -1,75 +1,55 @@
 import 'dart:convert';
 import 'dart:io';
-// import '../models/Suggestion.dart';
+import '../models/Suggestion.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import '../models/LocationDetail.dart';
 
-
-class Place {
-  var lat;
-  var lng;
-
-  Place({
-    this.lat,
-    this.lng,
-  });
-
-  @override
-  String toString() {
-    return 'Place(lat: $lat, lng: $lng)';
-  }
-}
-
-// For storing our result
+// // For storing our result
 class Suggestion {
   final String placeId;
-  final String description;
+  final String formatted;
+  final String lon;
+  final String lat;
 
-  Suggestion(this.placeId, this.description);
+  String? oldName;
+  String? country;
+  String? city;
+  Suggestion(this.placeId, this.formatted, this.lon, this.lat, this.city,
+      this.country, this.oldName);
 
   @override
   String toString() {
-    return 'Suggestion(description: $description, placeId: $placeId)';
+    return 'Suggestion(description: $formatted, placeId: $placeId)';
   }
 }
 
 class PlaceApiProvider {
   Future<List<Suggestion>?> fetchSuggestions(String input, String lang) async {
     final String request =
-        'https://rsapi.goong.io/Place/AutoComplete?api_key=bi8HxGWnMPaASzQp2hQebJBwG2wRQfhyXaBeHdal&input=$input';
-    // final response = await client.get(request as Uri);
+        "https://api.geoapify.com/v1/geocode/autocomplete?text=$input&lang=en&apiKey=480ad5b6c3a7477aa7e7fc4cc38b9bc6";
     final response = await http.get(Uri.parse(request));
 
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
-      if (result['predictions'] == null) {
-        // List<Suggestion> test ;
+
+      if (result == null || result['features'] == null) {
         return null;
       }
 
-      return result['predictions']
-          .map<Suggestion>((p) => Suggestion(p['place_id'], p['description']))
-          .toList();
-    } else {
-      throw Exception('Failed to fetch suggestion');
-    }
-  }
+      return result['features'].map<Suggestion>((p) {
+        var placeId = p['properties']['place_id'];
+        var formatted = p['properties']['formatted'];
+        var lon = p['properties']['lon'];
+        var lat = p['properties']['lat'];
 
-  Future<LocationDetail?> getPlaceDetailFromId(String placeId) async {
-    final request =
-        'https://rsapi.goong.io/Place/Detail?place_id=$placeId&api_key=bi8HxGWnMPaASzQp2hQebJBwG2wRQfhyXaBeHdal';
+        var oldName = p['properties']['oldName'];
+        var country = p['properties']['country'];
+        var city = p['properties']['city'];
 
-    final response = await http.get(Uri.parse(request));
-
-    LocationDetail locationDetail = new LocationDetail();
-
-    if (response.statusCode == 200) {
-      // final result = json.decode(response.body);
-      final result2 = LocationDetail.fromJson(jsonDecode(response.body));
-      locationDetail = result2;
-
-      return locationDetail;
-
+        return Suggestion(placeId, formatted, lon.toString(), lat.toString(),
+            oldName, country, city);
+      }).toList();
     } else {
       throw Exception('Failed to fetch suggestion');
     }

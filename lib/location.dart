@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/models/Weather.dart';
 import 'package:weather_app/widget/address_search.dart';
 import 'package:weather_app/widget/popular_location.dart';
 import 'package:weather_app/widget/list_location.dart';
@@ -6,6 +7,8 @@ import 'package:weather_app/network/PlaceService.dart';
 
 import 'database/database_helper.dart';
 import 'main.dart';
+// import 'models/Suggestion.dart';
+import 'network/WeatherApiClient.dart';
 
 List<Map<String, dynamic>> data = [];
 
@@ -19,6 +22,7 @@ class LocationPage extends StatefulWidget {
 class _PositionPageState extends State<LocationPage> {
   bool _isEdit = false;
   bool _isOpenMap = false;
+  List<Weather> data_weather = [];
 
   openMap() {
     setState(() {
@@ -27,15 +31,30 @@ class _PositionPageState extends State<LocationPage> {
   }
 
   void _requestSqlDataAsync() async {
-    data = await dbHelper
-        .queryAllRows(); // call API/await function to get the data
-    print("Data $data");
+    data = await dbHelper.queryAllRows();
+
+    var len = data.length;
+    List<Weather> data_weather_tmp = [];
+
+    for (var i = 0; i < len; i++) {
+      var data_i = data[i];
+
+      Weather weather = await WeatherApiClient().getWeatherLocation(data[i]);
+
+      data_weather_tmp.insert(i, weather);
+
+      setState(() {
+        data_weather = data_weather_tmp;
+      });
+    }
+    print("data_weather $data_weather");
   }
 
   @override
   void initState() {
-    super.initState();
-    _requestSqlDataAsync();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _requestSqlDataAsync();
+    });
   }
 
   @override
@@ -80,7 +99,8 @@ class _PositionPageState extends State<LocationPage> {
                 isOpenMap: _isOpenMap,
               ),
               if (!_isOpenMap)
-                listLocation(isEdit: _isEdit, data: data)
+                listLocation(isEdit: _isEdit, data: data_weather)
+              // listLocation(_isEdit, data_weather)
               else
                 locationPopulation(),
             ],
@@ -103,7 +123,6 @@ class SearchBar extends StatefulWidget {
       : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_apiO
   _SearchBarState createState() => _SearchBarState();
 }
 
@@ -125,21 +144,19 @@ class _SearchBarState extends State<SearchBar> {
               widget.openMap();
             },
           ),
-        // Icon(Icons.arrow_back_ios),
         Expanded(
           child: TextField(
             controller: _searchController,
             decoration: InputDecoration(
               hintText: 'Search...',
               filled: true, //<-- SEE HERE
-              // fillColor: Color.fromARGB(255, 43, 38, 56), //<-- SEE HERE
               isDense: true,
               contentPadding:
-                  EdgeInsets.symmetric(vertical: 0.0, horizontal: 18.0),
+                  const EdgeInsets.symmetric(vertical: 0.0, horizontal: 18.0),
               border:
                   OutlineInputBorder(borderRadius: BorderRadius.circular(100)),
               suffixIcon: IconButton(
-                icon: Icon(Icons.map),
+                icon: const Icon(Icons.map),
                 onPressed: () {
                   // widget.isOpenMap = !isOpenMap;
                   widget.onSearch(_searchController.text);
@@ -152,18 +169,11 @@ class _SearchBarState extends State<SearchBar> {
                 context: context,
                 delegate: AddressSearch(),
               );
-              // This will change the text displayed in the TextField
               if (result != null) {
-                final placeDetails = await PlaceApiProvider()
-                    .getPlaceDetailFromId(result.placeId);
-
-                print("placeDeatils $data");
-
-                var location = placeDetails?.result?.geometry?.location;
-
+                
                 Map<String, dynamic> row = {
-                  DatabaseHelper.columnLat: location?.lat,
-                  DatabaseHelper.columnLng: location?.lng
+                  DatabaseHelper.columnLat: result.lat,
+                  DatabaseHelper.columnLng: result.lon
                 };
 
                 final id = await dbHelper.insert(row);
