@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/Geometry.dart';
-import '../models/Weather2.dart';
 import '../helper/description_code.dart';
 import '../helper/icon_weather.dart';
 
-// ignore: camel_case_types
-class listLocation extends StatefulWidget {
+class SavedLocation extends StatefulWidget {
   final bool isEdit;
   final List<Weather> data;
   const listLocation({super.key, required this.isEdit, required this.data});

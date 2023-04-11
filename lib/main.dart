@@ -6,12 +6,11 @@ import 'package:weather_app/models/AirQuality.dart';
 import 'package:weather_app/models/CurrentForecast.dart';
 import 'database/database_helper.dart';
 import 'location.dart';
-import 'package:weather_app/models/Weather2.dart';
 import 'package:weather_app/network/WeatherApiClient.dart';
-import 'package:weather_app/widget/current_weather.dart';
-import 'package:weather_app/widget/daily_weather.dart';
-import 'package:weather_app/widget/hourly_weather.dart';
-import 'package:weather_app/widget/air_quality.dart';
+import 'package:weather_app/widget/CurrentWeather.dart';
+import 'package:weather_app/widget/DailyWeather.dart';
+import 'package:weather_app/widget/HourlyWeather.dart';
+import 'package:weather_app/widget/AirQuality.dart';
 
 import 'models/DailyForecast.dart';
 import 'models/HourlyForecast.dart';
@@ -69,13 +68,11 @@ class _MyHomePageState extends State<MyHomePage> {
     print("dataWeather: ${jsonDecode(dataWeather?[1].body)['list']}");
 
     hourlyForeCast = jsonDecode(dataWeather?[1].body)['list']
-        .map<HourlyForeCast>(
-            (hour) => HourlyForeCast.fromJson(hour))
+        .map<HourlyForeCast>((hour) => HourlyForeCast.fromJson(hour))
         .toList();
 
-    dailyForeCast = jsonDecode(dataWeather?[2].body)
-        .body['list']
-        .map<DailyForeCast>((day) => DailyForeCast.fromJson(jsonDecode(day)))
+    dailyForeCast = jsonDecode(dataWeather?[2].body)['list']
+        .map<DailyForeCast>((day) => DailyForeCast.fromJson(day))
         .toList();
   }
 

@@ -55,11 +55,11 @@ Widget day(String weekday, var iconCode, var tempMin, var tempMax) {
         children: [
           Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
             Text(
-              "${double.parse(tempMin).round()}°",
+              "${tempMin.toString()}°",
               style: const TextStyle(fontSize: 20),
             ),
             const Text("  /  ", style: TextStyle(fontSize: 20)),
-            Text("${double.parse(tempMax).round()}°",
+            Text("${tempMax.toString()}°",
                 style: const TextStyle(
                     fontSize: 20, color: Color.fromARGB(150, 0, 0, 0))),
           ]),

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/models/Weather2.dart';
-import 'package:weather_app/widget/address_search.dart';
-import 'package:weather_app/widget/popular_location.dart';
-import 'package:weather_app/widget/list_location.dart';
+import 'package:weather_app/widget/AddressSearch.dart';
+import 'package:weather_app/widget/PopularLocation.dart';
+import 'package:weather_app/widget/SavedLocation.dart';
 import 'package:weather_app/network/PlaceService.dart';
 
 import 'database/database_helper.dart';
 import 'main.dart';
 // import 'models/Suggestion.dart';
+import 'models/CurrentForecast.dart';
 import 'network/WeatherApiClient.dart';
 
 List<Map<String, dynamic>> data = [];
@@ -37,15 +37,15 @@ class _PositionPageState extends State<LocationPage> {
     List<Weather> data_weather_tmp = [];
 
     for (var i = 0; i < len; i++) {
-      var data_i = data[i];
+      // var data_i = data[i];
 
-      Weather weather = await WeatherApiClient().getWeatherLocation(data[i]);
+      // Weather weather = await WeatherApiClient().getWeatherLocation(data[i]);
 
-      data_weather_tmp.insert(i, weather);
+      // data_weather_tmp.insert(i, weather);
 
-      setState(() {
-        data_weather = data_weather_tmp;
-      });
+      // setState(() {
+      //   data_weather = data_weather_tmp;
+      // });
     }
     print("data_weather $data_weather");
   }
@@ -99,7 +99,7 @@ class _PositionPageState extends State<LocationPage> {
                 isOpenMap: _isOpenMap,
               ),
               if (!_isOpenMap)
-                listLocation(isEdit: _isEdit, data: data_weather)
+                SavedLocation(isEdit: _isEdit, data: data_weather)
               // listLocation(_isEdit, data_weather)
               else
                 locationPopulation(),

@@ -40,7 +40,7 @@ Widget box(Color backgroundColor, String time, var tmp, var iconCode) {
         children: [
           Text(time, style: const TextStyle(color: Colors.white, fontSize: 18)),
           getIcon(iconCode, size: 45),
-          Text('$tmp°',
+          Text('${tmp.round().toString()}°',
               style: const TextStyle(color: Colors.white, fontSize: 18))
         ],
       ));

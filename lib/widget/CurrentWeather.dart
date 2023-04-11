@@ -27,7 +27,7 @@ Widget currentWeather(CurrentForeCast currentForeCast) {
         children: [
           getDesCode((des).toString()),
           Text(
-            "$temp °C",
+            "${temp.toString()} °C",
             style: const TextStyle(fontSize: 60, fontWeight: FontWeight.w800),
           ),
           Row(

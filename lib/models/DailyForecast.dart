@@ -7,12 +7,12 @@ class DailyForeCast {
   int? pressure;
   int? humidity;
   List<Weather>? weather;
-  double? speed;
+  var speed;
   int? deg;
-  double? gust;
+  var gust;
   int? clouds;
-  double? pop;
-  double? rain;
+  var pop;
+  var rain;
 
   DailyForeCast(
       {this.dt,
@@ -128,12 +128,12 @@ class FeelsLike {
 }
 
 class Temp {
-  double? day;
-  double? min;
-  double? max;
-  double? night;
-  double? eve;
-  double? morn;
+  var day;
+  var min;
+  var max;
+  var night;
+  var eve;
+  var morn;
 
   Temp({this.day, this.min, this.max, this.night, this.eve, this.morn});
 

@@ -4,8 +4,8 @@ class HourlyForeCast {
   List<Weather>? weather;
   Clouds? clouds;
   Wind? wind;
-  int? visibility;
-  int? pop;
+  var visibility;
+  var pop;
   Sys? sys;
   String? dtTxt;
 
@@ -76,9 +76,9 @@ class Sys {
 }
 
 class Wind {
-  double? speed;
+  var speed;
   int? deg;
-  double? gust;
+  var gust;
 
   Wind({this.speed, this.deg, this.gust});
 
@@ -139,10 +139,10 @@ class Weather {
 }
 
 class Main {
-  double? temp;
-  double? feelsLike;
-  double? tempMin;
-  double? tempMax;
+  var temp;
+  var feelsLike;
+  var tempMin;
+  var tempMax;
   int? pressure;
   int? seaLevel;
   int? grndLevel;
