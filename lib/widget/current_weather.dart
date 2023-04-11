@@ -1,29 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/models/Weather.dart';
-import 'package:weather_app/widget/description_code.dart';
+import 'package:weather_app/models/CurrentForecast.dart';
+import 'package:weather_app/helper/description_code.dart';
 
-Widget currentWeather(Weather weather) {
-  var windspeed = weather.currentWeather?.windspeed;
+Widget currentWeather(CurrentForeCast currentForeCast) {
+  var windSpeed = currentForeCast.wind?.speed;
 
-  int idx_hour = DateTime.now().hour;
-  var humidity = weather.hourly?.humidity?[idx_hour];
+  var humidity = currentForeCast.main?.humidity;
 
-  var cloudcover = weather.hourly?.cloudcover?[idx_hour];
+  var cloudiness = currentForeCast.clouds?.all;
+
+  var des = currentForeCast.weather?[0].main;
+
+  // var temp = double.parse(currentForeCast.main?.temp).round();
+  var temp = currentForeCast.main?.temp?.round();
 
   return Container(
     height: 180,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(10),
-      color: Color.fromARGB(50, 56, 66, 82),
+      color: const Color.fromARGB(50, 56, 66, 82),
     ),
     padding: const EdgeInsets.all(10),
     child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          getDesCode((weather.currentWeather?.weathercode).toString()),
+          getDesCode((des).toString()),
           Text(
-            "${weather.currentWeather?.temperature?.round()} °C",
+            "$temp °C",
             style: const TextStyle(fontSize: 60, fontWeight: FontWeight.w800),
           ),
           Row(
@@ -35,7 +39,7 @@ Widget currentWeather(Weather weather) {
                     "assets/img/windspeed.png",
                     width: 18,
                   ),
-                  Text("${windspeed} km/h"),
+                  Text("$windSpeed km/h"),
                 ],
               ),
               const SizedBox(width: 24),
@@ -46,7 +50,7 @@ Widget currentWeather(Weather weather) {
                     "assets/img/humidity.png",
                     width: 18,
                   ),
-                  Text("${humidity} %"),
+                  Text("$humidity %"),
                 ],
               ),
               const SizedBox(width: 24),
@@ -57,7 +61,7 @@ Widget currentWeather(Weather weather) {
                     "assets/img/clouds.png",
                     width: 18,
                   ),
-                  Text("${cloudcover} %"),
+                  Text("$cloudiness %"),
                 ],
               ),
             ],

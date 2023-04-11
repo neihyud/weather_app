@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:weather_app/models/AirQuality.dart';
-import 'package:weather_app/models/Weather.dart';
+import 'package:weather_app/models/Weather2.dart';
 
 Widget infoWeather(AirQuality airQuality) {
   int idx_hour = DateTime.now().hour;

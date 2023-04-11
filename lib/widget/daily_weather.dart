@@ -3,10 +3,16 @@ import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 
-import '../models/Weather.dart';
-import 'icon_weather.dart';
+import '../models/DailyForecast.dart';
+import '../helper/icon_weather.dart';
 
-Widget dailyWeather(Weather weather) {
+String getDayOfWeek(final day) {
+  DateTime time = DateTime.fromMillisecondsSinceEpoch(day * 1000);
+  final dayOfWeek = DateFormat('EEEE').format(time);
+  return dayOfWeek;
+}
+
+Widget dailyWeather(List<DailyForeCast> dailyForeCast) {
   return Container(
     // height: 500,
     decoration: BoxDecoration(
@@ -19,54 +25,22 @@ Widget dailyWeather(Weather weather) {
         shrinkWrap: true,
         itemCount: 7,
         itemBuilder: (BuildContext context, index) {
-          String? dateTime = weather.daily?.time?[index];
-          DateTime daytime = DateTime.parse(dateTime!);
-
-          String weekday = "${daytime.weekday}";
-
-          String currentWeekday = "";
-
-          switch (weekday) {
-            case "1":
-              currentWeekday = 'Monday';
-              break;
-            case "2":
-              currentWeekday = 'Tuesday';
-              break;
-            case "3":
-              currentWeekday = 'Wednesday';
-              break;
-            case "4":
-              currentWeekday = 'Thursday';
-              break;
-            case "5":
-              currentWeekday = 'Friday';
-              break;
-            case "6":
-              currentWeekday = 'Saturday';
-              break;
-            case "7":
-              currentWeekday = 'Sunday';
-              break;
-
-            default:
-              currentWeekday = 'Err';
-          }
-          if (index == 0) {
-            currentWeekday = "Today";
-          }
-
+          var dt = dailyForeCast[index].dt;
+          String currentWeekDay = getDayOfWeek(dt);
+          var iconCode = dailyForeCast[index].weather?[0].icon;
+          var tempMin = dailyForeCast[index].temp?.min?.round();
+          var tempMax = dailyForeCast[index].temp?.max?.round();
           return day(
-            currentWeekday,
-            "${weather.daily?.weathercode?[index]}",
-            "${weather.daily?.temperature2MMin?[index]}",
-            "${weather.daily?.temperature2MMax?[index]}",
+            currentWeekDay,
+            iconCode,
+            tempMin,
+            tempMax,
           );
         }),
   );
 }
 
-Widget day(String weekday, String code, String temp_min, String temp_max) {
+Widget day(String weekday, var iconCode, var tempMin, var tempMax) {
   return SizedBox(
     height: 65,
     child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -75,17 +49,17 @@ Widget day(String weekday, String code, String temp_min, String temp_max) {
         child: Text(weekday,
             style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
       ),
-      getIcon(code),
+      getIcon(iconCode),
       Wrap(
         spacing: 12.0,
         children: [
           Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
             Text(
-              "${double.parse(temp_min).round()}°",
-              style: TextStyle(fontSize: 20),
+              "${double.parse(tempMin).round()}°",
+              style: const TextStyle(fontSize: 20),
             ),
             const Text("  /  ", style: TextStyle(fontSize: 20)),
-            Text("${double.parse(temp_max).round()}°",
+            Text("${double.parse(tempMax).round()}°",
                 style: const TextStyle(
                     fontSize: 20, color: Color.fromARGB(150, 0, 0, 0))),
           ]),

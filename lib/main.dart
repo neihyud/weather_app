@@ -1,14 +1,20 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:weather_app/models/AirQuality.dart';
+import 'package:weather_app/models/CurrentForecast.dart';
 import 'database/database_helper.dart';
 import 'location.dart';
-import 'package:weather_app/models/Weather.dart';
+import 'package:weather_app/models/Weather2.dart';
 import 'package:weather_app/network/WeatherApiClient.dart';
 import 'package:weather_app/widget/current_weather.dart';
 import 'package:weather_app/widget/daily_weather.dart';
 import 'package:weather_app/widget/hourly_weather.dart';
 import 'package:weather_app/widget/air_quality.dart';
+
+import 'models/DailyForecast.dart';
+import 'models/HourlyForecast.dart';
 
 final dbHelper = DatabaseHelper();
 
@@ -44,13 +50,33 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Weather weather = new Weather();
+  List<dynamic>? dataWeather;
+  CurrentForeCast? currentForeCast;
+  List<HourlyForeCast>? hourlyForeCast;
+  List<DailyForeCast>? dailyForeCast;
+
   AirQuality airQuality = new AirQuality();
   var isLoaded = false;
 
   Future<void> getData() async {
-    weather = await WeatherApiClient().getWeather();
+    dataWeather = await WeatherApiClient().dataForecastDetail(null, null);
+
     airQuality = await WeatherApiClient().getAirQuality();
+
+    currentForeCast =
+        CurrentForeCast.fromJson(jsonDecode(dataWeather?[0].body));
+
+    print("dataWeather: ${jsonDecode(dataWeather?[1].body)['list']}");
+
+    hourlyForeCast = jsonDecode(dataWeather?[1].body)['list']
+        .map<HourlyForeCast>(
+            (hour) => HourlyForeCast.fromJson(hour))
+        .toList();
+
+    dailyForeCast = jsonDecode(dataWeather?[2].body)
+        .body['list']
+        .map<DailyForeCast>((day) => DailyForeCast.fromJson(jsonDecode(day)))
+        .toList();
   }
 
   @override
@@ -87,11 +113,11 @@ class _MyHomePageState extends State<MyHomePage> {
               child: ListView(
                 scrollDirection: Axis.vertical,
                 children: <Widget>[
-                  currentWeather(weather),
+                  currentWeather(currentForeCast!),
                   const SizedBox(height: 16),
-                  hourlyWeather(weather),
+                  hourlyWeather(hourlyForeCast!),
                   const SizedBox(height: 16),
-                  dailyWeather(weather),
+                  dailyWeather(dailyForeCast!),
                   const SizedBox(height: 16),
                   infoWeather(airQuality),
                 ],
@@ -101,75 +127,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ));
   }
 }
-
-// ignore: camel_case_types
-// class infoForeCast extends StatelessWidget {
-//   const infoForeCast({
-//     super.key,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return GridView.count(
-//       // scrollDirection: Axis.vertical,
-//       shrinkWrap: true,
-//       primary: false,
-//       // padding: const EdgeInsets.all(20),
-//       crossAxisSpacing: 10,
-//       mainAxisSpacing: 10,
-//       crossAxisCount: 2,
-//       children: <Widget>[
-//         Container(
-//           decoration: BoxDecoration(
-//             borderRadius: BorderRadius.circular(10),
-//             color: Color.fromARGB(20, 22, 44, 33),
-//           ),
-//           padding: const EdgeInsets.all(8),
-//           child:
-//               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-//             Row(
-//               children: [Icon(Icons.air), Text("Gió")],
-//             ),
-//             Expanded(
-//               child: Column(
-//                   mainAxisAlignment: MainAxisAlignment.center,
-//                   children: [
-//                     Text(
-//                       "17",
-//                       style: TextStyle(fontSize: 70),
-//                     ),
-//                   ]),
-//             )
-//           ]),
-//         ),
-//         Container(
-//           padding: const EdgeInsets.all(8),
-//           decoration: BoxDecoration(
-//             borderRadius: BorderRadius.circular(10),
-//             color: Color.fromARGB(20, 22, 44, 33),
-//           ),
-//           child: const Text('Heed not the rabble'),
-//         ),
-//         Container(
-//           padding: const EdgeInsets.all(8),
-//           decoration: BoxDecoration(
-//             borderRadius: BorderRadius.circular(10),
-//             color: Color.fromARGB(20, 22, 44, 33),
-//           ),
-//           child: const Text('Sound of screams but the'),
-//         ),
-//         Container(
-//           padding: const EdgeInsets.all(8),
-//           decoration: BoxDecoration(
-//             borderRadius: BorderRadius.circular(10),
-//             color: Color.fromARGB(20, 22, 44, 33),
-//           ),
-//           child: const Text('Who scream'),
-//         ),
-//       ],
-//     );
-//   }
-// }
 
 // ignore: camel_case_types
 class buildMenuItem extends StatelessWidget {

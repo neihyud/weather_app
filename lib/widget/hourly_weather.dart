@@ -1,56 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/models/Weather.dart';
-import 'package:weather_app/widget/icon_weather.dart';
+import 'package:weather_app/helper/icon_weather.dart';
 
-Widget hourlyWeather(Weather weather) {
-  int idx_hour = DateTime.now().hour;
+import '../models/HourlyForecast.dart';
 
-  var len = weather.hourly?.time?.length;
-
-  if (len != null) {
-    len = len - idx_hour;
-  }
-
+Widget hourlyWeather(List<HourlyForeCast> hourlyForeCast) {
   return Container(
       height: 150,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Color.fromARGB(50, 56, 66, 82),
+        color: const Color.fromARGB(50, 56, 66, 82),
       ),
       child: ListView.builder(
-          itemCount: len,
+          itemCount: 24,
           scrollDirection: Axis.horizontal,
           itemBuilder: (BuildContext context, index) {
-            String? datetimeString = weather.hourly?.time?[index + idx_hour];
-            DateTime datetime = DateTime.parse(datetimeString!);
+            String? timeString = hourlyForeCast[index].dtTxt;
 
-            String hourString = "${datetime.hour}".padLeft(2, '0');
-            String minuteString = "${datetime.minute}".padLeft(2, '0');
+            DateTime dateTime = DateTime.parse(timeString!);
 
-            String current_time = "${hourString}:${minuteString}";
+            String hourString = "${dateTime.hour}".padLeft(2, '0');
+            String minuteString = "${dateTime.minute}".padLeft(2, '0');
 
-            return box(
-                Colors.transparent,
-                "${current_time}",
-                "${weather.hourly?.temperature2M?[index + idx_hour]}",
-                "${weather.hourly?.weathercode?[index + idx_hour]}");
+            String currentTime = "$hourString:$minuteString";
+
+            var temp = hourlyForeCast[index].main?.temp;
+            var iconCode = hourlyForeCast[index].weather?[0].icon;
+
+            return box(Colors.transparent, currentTime, temp, iconCode);
           }));
 }
 
-Widget box(Color backgroundcolor, String time, String tmp, String weathercode) {
+Widget box(Color backgroundColor, String time, var tmp, var iconCode) {
   return Container(
-      margin: EdgeInsets.all(10),
-      color: backgroundcolor,
+      margin: const EdgeInsets.all(10),
+      color: backgroundColor,
       alignment: Alignment.center,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(time, style: TextStyle(color: Colors.white, fontSize: 18)),
-
-          getIcon(weathercode, size: 45),
-
-          Text('${double.parse(tmp).round()}°',
-              style: TextStyle(color: Colors.white, fontSize: 18))
+          Text(time, style: const TextStyle(color: Colors.white, fontSize: 18)),
+          getIcon(iconCode, size: 45),
+          Text('$tmp°',
+              style: const TextStyle(color: Colors.white, fontSize: 18))
         ],
       ));
 }
