@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:weather_app/provider/WeatherProvider.dart';
 import 'package:weather_app/widget/AddressSearch.dart';
 import 'package:weather_app/widget/PopularLocation.dart';
 import 'package:weather_app/widget/SavedLocation.dart';
@@ -10,8 +12,6 @@ import 'main.dart';
 import 'models/CurrentForecast.dart';
 import 'network/WeatherApiClient.dart';
 
-List<Map<String, dynamic>> data = [];
-
 class LocationPage extends StatefulWidget {
   const LocationPage({super.key});
 
@@ -22,7 +22,7 @@ class LocationPage extends StatefulWidget {
 class _PositionPageState extends State<LocationPage> {
   bool _isEdit = false;
   bool _isOpenMap = false;
-  List<Weather> data_weather = [];
+  // List<Weather> data_weather = [];
 
   openMap() {
     setState(() {
@@ -30,35 +30,12 @@ class _PositionPageState extends State<LocationPage> {
     });
   }
 
-  void _requestSqlDataAsync() async {
-    data = await dbHelper.queryAllRows();
-
-    var len = data.length;
-    List<Weather> data_weather_tmp = [];
-
-    for (var i = 0; i < len; i++) {
-      // var data_i = data[i];
-
-      // Weather weather = await WeatherApiClient().getWeatherLocation(data[i]);
-
-      // data_weather_tmp.insert(i, weather);
-
-      // setState(() {
-      //   data_weather = data_weather_tmp;
-      // });
-    }
-    print("data_weather $data_weather");
-  }
-
-  @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _requestSqlDataAsync();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final weatherData = Provider.of<WeatherProvider>(context);
+    List<CurrentForeCast> listLocationsWeather =
+        weatherData.getCurrentLocationsWeather;
+
     return Scaffold(
       // extendBodyBehindAppBar: true,
       appBar: !_isOpenMap
@@ -69,7 +46,7 @@ class _PositionPageState extends State<LocationPage> {
                     Navigator.pop(context);
                   },
                   child: Icon(Icons.close)),
-              title: Text("Sửa địa điểm "),
+              title: const Text("Sửa địa điểm "),
               elevation: 0,
               actions: [
                 TextButton(
@@ -78,11 +55,11 @@ class _PositionPageState extends State<LocationPage> {
                       _isEdit = !_isEdit;
                     });
                   },
-                  child: Text(!_isEdit ? 'Chỉnh sửa' : 'Làm xong'),
                   style: ButtonStyle(
                     foregroundColor:
                         MaterialStateProperty.all<Color>(Colors.white),
                   ),
+                  child: Text(!_isEdit ? 'Chỉnh sửa' : 'Làm xong'),
                 )
               ],
             )
@@ -90,7 +67,7 @@ class _PositionPageState extends State<LocationPage> {
       body: Container(
           width: double.infinity,
           height: double.infinity,
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
               SearchBar(
@@ -99,7 +76,7 @@ class _PositionPageState extends State<LocationPage> {
                 isOpenMap: _isOpenMap,
               ),
               if (!_isOpenMap)
-                SavedLocation(isEdit: _isEdit, data: data_weather)
+                SavedLocation(isEdit: _isEdit)
               // listLocation(_isEdit, data_weather)
               else
                 locationPopulation(),
@@ -128,9 +105,13 @@ class SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<SearchBar> {
   final TextEditingController _searchController = TextEditingController();
+
   // final bool isOpenMap;
   @override
   Widget build(BuildContext context) {
+    final weatherData = Provider.of<WeatherProvider>(context);
+    List<CurrentForeCast> listLocationsWeather =
+        weatherData.getCurrentLocationsWeather;
     return Row(
       children: [
         if (widget.isOpenMap)
@@ -170,7 +151,6 @@ class _SearchBarState extends State<SearchBar> {
                 delegate: AddressSearch(),
               );
               if (result != null) {
-                
                 Map<String, dynamic> row = {
                   DatabaseHelper.columnLat: result.lat,
                   DatabaseHelper.columnLng: result.lon
@@ -178,8 +158,22 @@ class _SearchBarState extends State<SearchBar> {
 
                 final id = await dbHelper.insert(row);
 
+                CurrentForeCast currentForeCast = await WeatherApiClient()
+                    .dataForecastCurrent(
+                        row['columnLat'], row['columnLng'], null);
+
+                print("currentForeCast ${currentForeCast.toJson()}");
+                weatherData.updateCurrentLocationsWeather(result);
+
                 setState(() {
-                  data = [...data, row];
+                  print("run listLocation");
+                  listLocationsWeather = [
+                    ...listLocationsWeather,
+                    currentForeCast
+                  ];
+
+                  print(
+                      "LENGTH CURRENT WEATHER ${weatherData.getCurrentLocationsWeather.length}");
                 });
               }
             },

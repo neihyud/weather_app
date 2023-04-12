@@ -1,9 +1,10 @@
 import 'dart:convert';
-
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:weather_app/models/AirQuality.dart';
 import 'package:weather_app/models/CurrentForecast.dart';
+import 'package:weather_app/provider/WeatherProvider.dart';
 import 'database/database_helper.dart';
 import 'location.dart';
 import 'package:weather_app/network/WeatherApiClient.dart';
@@ -29,12 +30,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blueGrey,
+    return ChangeNotifierProvider(
+      create: (ctx) => WeatherProvider(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blueGrey,
+        ),
+        home: const MyHomePage(title: 'Home'),
       ),
-      home: const MyHomePage(title: 'Home'),
     );
   }
 }
@@ -49,45 +54,52 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<dynamic>? dataWeather;
   CurrentForeCast? currentForeCast;
   List<HourlyForeCast>? hourlyForeCast;
   List<DailyForeCast>? dailyForeCast;
 
   AirQuality airQuality = new AirQuality();
-  var isLoaded = false;
+  bool _isLoading = false;
 
-  Future<void> getData() async {
-    dataWeather = await WeatherApiClient().dataForecastDetail(null, null);
+  @override
+  void initState() {
+    setState(() {
+      _isLoading = true;
+    });
+    Provider.of<WeatherProvider>(context, listen: false)
+        .dataForecastDetail(null, null)
+        .then((_) {
+      setState(() {
+        _isLoading = false;
+      });
+    });
 
-    airQuality = await WeatherApiClient().getAirQuality();
+    Provider.of<WeatherProvider>(context, listen: false)
+        .savedLocationForecast();
 
-    currentForeCast =
-        CurrentForeCast.fromJson(jsonDecode(dataWeather?[0].body));
-
-    print("dataWeather: ${jsonDecode(dataWeather?[1].body)['list']}");
-
-    hourlyForeCast = jsonDecode(dataWeather?[1].body)['list']
-        .map<HourlyForeCast>((hour) => HourlyForeCast.fromJson(hour))
-        .toList();
-
-    dailyForeCast = jsonDecode(dataWeather?[2].body)['list']
-        .map<DailyForeCast>((day) => DailyForeCast.fromJson(day))
-        .toList();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final weatherData = Provider.of<WeatherProvider>(context);
+    final dataWeather = weatherData.getDataForeCastDetail;
+
+    if (!_isLoading) {
+      currentForeCast =
+          CurrentForeCast.fromJson(jsonDecode(dataWeather[0].body));
+
+      hourlyForeCast = jsonDecode(dataWeather[1].body)['list']
+          .map<HourlyForeCast>((hour) => HourlyForeCast.fromJson(hour))
+          .toList();
+
+      dailyForeCast = jsonDecode(dataWeather[2].body)['list']
+          .map<DailyForeCast>((day) => DailyForeCast.fromJson(day))
+          .toList();
+    }
+
     return Scaffold(
-        appBar: AppBar(
-            // title: ListTile(
-            //   title: Center(
-            //       child: Row(children: const [Text('Title'), Icon(Icons.bolt)])),
-            //   subtitle: const Center(child: Text('Subtitle')),
-            //   onTap: () {},
-            // ),
-            // elevation: ,
-            ),
+        appBar: AppBar(),
         drawer: Drawer(
           child: ListView(
             padding: EdgeInsets.zero,
@@ -97,31 +109,25 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-        body: FutureBuilder(
-          future: getData(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
+        body: _isLoading
+            ? const Center(
                 child: CircularProgressIndicator(),
-              );
-            }
-            return Container(
-              padding: const EdgeInsets.all(16.0),
-              child: ListView(
-                scrollDirection: Axis.vertical,
-                children: <Widget>[
-                  currentWeather(currentForeCast!),
-                  const SizedBox(height: 16),
-                  hourlyWeather(hourlyForeCast!),
-                  const SizedBox(height: 16),
-                  dailyWeather(dailyForeCast!),
-                  const SizedBox(height: 16),
-                  infoWeather(airQuality),
-                ],
-              ),
-            );
-          },
-        ));
+              )
+            : Container(
+                padding: const EdgeInsets.all(16.0),
+                child: ListView(
+                  scrollDirection: Axis.vertical,
+                  children: <Widget>[
+                    currentWeather(currentForeCast!),
+                    const SizedBox(height: 16),
+                    hourlyWeather(hourlyForeCast!),
+                    const SizedBox(height: 16),
+                    dailyWeather(dailyForeCast!),
+                    const SizedBox(height: 16),
+                    infoWeather(airQuality),
+                  ],
+                ),
+              ));
   }
 }
 

@@ -103,10 +103,10 @@ class Weather {
 }
 
 class FeelsLike {
-  double? day;
-  double? night;
-  double? eve;
-  double? morn;
+  var day;
+  var night;
+  var eve;
+  var morn;
 
   FeelsLike({this.day, this.night, this.eve, this.morn});
 

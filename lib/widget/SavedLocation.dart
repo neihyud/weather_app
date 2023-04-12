@@ -1,30 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import 'package:weather_app/models/CurrentForecast.dart';
 
-import '../models/Geometry.dart';
 import '../helper/description_code.dart';
 import '../helper/icon_weather.dart';
+import '../provider/WeatherProvider.dart';
 
 class SavedLocation extends StatefulWidget {
   final bool isEdit;
-  final List<Weather> data;
-  const listLocation({super.key, required this.isEdit, required this.data});
+  const SavedLocation({super.key, required this.isEdit});
 
   @override
-  State<listLocation> createState() => _listLocationState();
+  State<SavedLocation> createState() => _SavedLocationState();
 }
 
 // ignore: camel_case_types
-class _listLocationState extends State<listLocation> {
-  List<String> daysFor = [
-    "Brazil",
-    "Nepal",
-    "India",
-  ];
-
+class _SavedLocationState extends State<SavedLocation> {
   @override
   Widget build(BuildContext context) {
-    print("dataListLocationSTate: ${widget.data.length}");
+    final weatherData = Provider.of<WeatherProvider>(context);
+    final listLocationsWeather = weatherData.getCurrentLocationsWeather;
+
     return Expanded(
       child: ReorderableListView(
           // buildDefaultDragHandles: false,
@@ -33,43 +29,49 @@ class _listLocationState extends State<listLocation> {
               if (oldIndex < newIndex) {
                 newIndex -= 1;
               }
-              final Weather item = widget.data.removeAt(oldIndex);
-              widget.data.insert(newIndex, item);
+              final CurrentForeCast item =
+                  listLocationsWeather.removeAt(oldIndex);
+              listLocationsWeather.insert(newIndex, item);
             });
           },
           children: [
-            for (int index = 0; index < widget.data.length; index += 1)
-              day(index, widget.data[index])
+            for (int index = 0; index < listLocationsWeather.length; index += 1)
+              location(index, listLocationsWeather[index])
           ]),
     );
   }
 
-  Widget day(int index, Weather forecast) {
-    var temp = forecast.currentWeather?.temperature;
-    var time = forecast.currentWeather?.time;
-    var weatherCode = forecast.currentWeather?.weathercode;
-    DateTime datetime = DateTime.parse(time!);
+  Widget location(int index, CurrentForeCast currentForeCast) {
+    var temp = currentForeCast.main?.temp;
 
-    var day = "${datetime.day}".padLeft(2, '0');
-    var month = "${datetime.month}".padLeft(2, '0');
+    var iconCode = currentForeCast.weather?[0].icon;
+    var desCode = currentForeCast.weather?[0].description;
 
-    var hour = "${datetime.hour}".padLeft(2, '0');
-    var minute = "${datetime.minute}".padLeft(2, '0');
+    var name = currentForeCast.name;
+    DateTime dateTime =
+        DateTime.fromMillisecondsSinceEpoch(currentForeCast.dt! * 1000);
+
+    var day = "${dateTime.day}".padLeft(2, '0');
+    var month = "${dateTime.month}".padLeft(2, '0');
+
+    var hour = "${dateTime.hour}".padLeft(2, '0');
+    var minute = "${dateTime.minute}".padLeft(2, '0');
 
     return Row(key: Key('$index'), children: [
-      if (widget.isEdit) Icon(Icons.home),
+      if (widget.isEdit) const Icon(Icons.home),
       Flexible(
         flex: 1,
         child: Stack(children: [
           Container(
             margin: widget.isEdit
-                ? EdgeInsets.symmetric(horizontal: 16, vertical: 8)
-                : EdgeInsets.symmetric(vertical: 8),
-            padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
+                ? const EdgeInsets.symmetric(horizontal: 16, vertical: 8)
+                : const EdgeInsets.symmetric(vertical: 8),
+            padding:
+                const EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
             decoration: BoxDecoration(
                 border: Border.all(
                     width: 1,
-                    color: Color.fromARGB(255, 2, 2, 2),
+                    color: const Color.fromARGB(255, 2, 2, 2),
                     style: BorderStyle.solid),
                 borderRadius: BorderRadius.circular(10)),
             height: 100,
@@ -81,12 +83,12 @@ class _listLocationState extends State<listLocation> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Hanoi",
-                        style: TextStyle(fontWeight: FontWeight.w700),
+                        "$name",
+                        style: const TextStyle(fontWeight: FontWeight.w700),
                       ),
                       Text(
                         "$day/$month    $hour:$minute",
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       )
                     ],
                   ),
@@ -95,17 +97,17 @@ class _listLocationState extends State<listLocation> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Row(children: [
-                        // Icon(Icons.cloudy_snowing),
-                        getIcon(weatherCode.toString()),
+                        getIcon(iconCode.toString()),
                         const SizedBox(
                           width: 10,
                         ),
                         Text(
-                          "${temp?.round()}  °C",
-                          style: TextStyle(fontWeight: FontWeight.w700),
+                          "${temp?.round().toString()}  °C",
+                          style: const TextStyle(fontWeight: FontWeight.w700),
                         )
                       ]),
-                      getDesCode(weatherCode.toString())
+                      Text("$desCode")
+                      // getDesCode(iconCode.toString())
                     ],
                   ),
                 ]),
@@ -118,7 +120,7 @@ class _listLocationState extends State<listLocation> {
                 onTap: () {
                   print("delete location");
                 },
-                child: Icon(
+                child: const Icon(
                   Icons.remove_circle,
                   size: 20,
                 ),
@@ -130,8 +132,8 @@ class _listLocationState extends State<listLocation> {
         Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              color: Color.fromARGB(255, 160, 178, 207)),
-          padding: EdgeInsets.all(3),
+              color: const Color.fromARGB(255, 160, 178, 207)),
+          padding: const EdgeInsets.all(3),
           child: ReorderableDragStartListener(
             index: index,
             child: const Icon(Icons.drag_handle),

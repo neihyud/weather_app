@@ -10,7 +10,7 @@ class CurrentForeCast {
   int? timezone;
   int? id;
   String? name;
-  int? cod;
+  var cod;
 
   CurrentForeCast(
       {this.coord,
@@ -88,9 +88,9 @@ class Clouds {
 }
 
 class Wind {
-  double? speed;
+  var speed;
   int? deg;
-  double? gust;
+  var gust;
 
   Wind({this.speed, this.deg, this.gust});
 
@@ -110,10 +110,10 @@ class Wind {
 }
 
 class Main {
-  double? temp;
-  double? feelsLike;
-  double? tempMin;
-  double? tempMax;
+  var temp;
+  var feelsLike;
+  var tempMin;
+  var tempMax;
   int? pressure;
   int? humidity;
   int? seaLevel;
@@ -180,8 +180,8 @@ class Weather {
 }
 
 class Coord {
-  int? lon;
-  int? lat;
+  var lon;
+  var lat;
 
   Coord({this.lon, this.lat});
 

@@ -27,29 +27,19 @@ class WeatherApiClient {
     }
 
     String apiCurrentForecast =
-        'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&units=metric&appid=${dotenv.env['API_KEY_WEATHER']}';
+        'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&units=metric&lang=vi&lang=viappid=${dotenv.env['API_KEY_WEATHER']}';
 
     String apiHourlyForecast =
-        'https://pro.openweathermap.org/data/2.5/forecast/hourly?lat=$lat&lon=$lon&units=metric&appid=${dotenv.env['API_KEY_WEATHER']}';
+        'https://pro.openweathermap.org/data/2.5/forecast/hourly?lat=$lat&lon=$lon&units=metric&lang=vi&appid=${dotenv.env['API_KEY_WEATHER']}';
 
     String apiDailyForeCast =
-        'https://pro.openweathermap.org/data/2.5/forecast/daily?lat=$lat&lon=$lon&cnt=7&units=metric&appid=${dotenv.env['API_KEY_WEATHER']}';
+        'https://pro.openweathermap.org/data/2.5/forecast/daily?lat=$lat&lon=$lon&cnt=7&units=metric&lang=vi&appid=${dotenv.env['API_KEY_WEATHER']}';
 
     List<dynamic> result = await Future.wait([
       http.get(Uri.parse(apiCurrentForecast)),
       http.get(Uri.parse(apiHourlyForecast)),
       http.get(Uri.parse(apiDailyForeCast)),
     ]);
-
-    // CurrentWeather currentWeather = result[0];
-
-    // List<HourlyForeCast> hourlyForeCast = result[1]
-    //     .map<HourlyForeCast>((hour) => HourlyForeCast.fromJson(hour))
-    //     .toList();
-
-    // List<DailyForeCast> dailyForeCast = result[2]
-    //     .map<DailyForeCast>((day) => DailyForeCast.fromJson(day))
-    //     .toList();
 
     return result;
   }
@@ -64,7 +54,7 @@ class WeatherApiClient {
     }
 
     String apiCurrentForecast =
-        'https://api.openweathermap.org/data/2.5/weather?$subQuery&units=metric&appid=${dotenv.env['API_KEY_WEATHER']}';
+        'https://api.openweathermap.org/data/2.5/weather?$subQuery&units=metric&lang=vi&appid=${dotenv.env['API_KEY_WEATHER']}';
 
     final result = await http.get(Uri.parse(apiCurrentForecast));
 

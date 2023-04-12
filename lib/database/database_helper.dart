@@ -18,7 +18,7 @@ class DatabaseHelper {
   Future<void> init() async {
     final documentsDirectory = await getApplicationDocumentsDirectory();
     final path = join(documentsDirectory.path, _databaseName);
-    print("path: ${documentsDirectory.path}");
+
     _db = await openDatabase(
       path,
       version: _databaseVersion,
@@ -35,7 +35,7 @@ class DatabaseHelper {
 
   // Helper methods
 
-  // Inserts a row in the database where each key in the Map is a column name
+  // Inserts a row in the database where each key in the Map is a column name6
   // and the value is the column value. The return value is the id of the
   // inserted row.
   Future<int> insert(Map<String, dynamic> row) async {
