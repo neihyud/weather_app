@@ -14,10 +14,10 @@ class WeatherProvider with ChangeNotifier {
     return [..._dataForecastDetail];
   }
 
-  List<CurrentForeCast> _currentLocationsWeather = [];
+  List<CurrentForeCast> _currentWeatherLocations = [];
 
   List<CurrentForeCast> get getCurrentLocationsWeather {
-    return [..._currentLocationsWeather];
+    return [..._currentWeatherLocations];
   }
 
   Future<dynamic> dataForecastDetail(var lat, var lon) async {
@@ -35,11 +35,15 @@ class WeatherProvider with ChangeNotifier {
     String apiDailyForeCast =
         'https://pro.openweathermap.org/data/2.5/forecast/daily?lat=$lat&lon=$lon&cnt=7&units=metric&appid=${dotenv.env['API_KEY_WEATHER']}';
 
+    String apiAirPollution =
+        "https://api.openweathermap.org/data/2.5/air_pollution?lat=21&lon=105&appid=${dotenv.env['API_KEY_WEATHER']}";
+
     try {
       List<dynamic> result = await Future.wait([
         http.get(Uri.parse(apiCurrentForecast)),
         http.get(Uri.parse(apiHourlyForecast)),
         http.get(Uri.parse(apiDailyForeCast)),
+        http.get(Uri.parse(apiAirPollution))
       ]);
 
       _dataForecastDetail = result;
@@ -62,25 +66,23 @@ class WeatherProvider with ChangeNotifier {
       CurrentForeCast currentForeCast = await WeatherApiClient()
           .dataForecastCurrent(data[i]['lat'], data[i]['lng'], null);
 
-      // print("Provider currentForecast: ${currentForeCast.toJson()}");
-
-      _currentLocationsWeather.insert(i, currentForeCast);
+      _currentWeatherLocations.insert(i, currentForeCast);
     }
 
     notifyListeners();
   }
 
-  void updateCurrentLocationsWeather(var result) async {
+  void updateCurrentWeatherLocation(var result) async {
     CurrentForeCast currentForeCast = await WeatherApiClient()
         .dataForecastCurrent(result.lat, result.lon, null);
 
-    print("Before _dataForecastDetail ${_currentLocationsWeather.length}");
-    print("AFF ${currentForeCast.toJson()}");
+    _currentWeatherLocations = [..._currentWeatherLocations, currentForeCast];
 
-    _currentLocationsWeather = [..._currentLocationsWeather, currentForeCast];
+    notifyListeners();
+  }
 
-    print("After _dataForecastDetail ${_currentLocationsWeather.length}");
-
+  void deleteCurrentWeatherLocation(var idx) async {
+    _currentWeatherLocations.removeAt(idx);
     notifyListeners();
   }
 }

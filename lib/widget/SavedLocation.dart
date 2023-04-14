@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:weather_app/main.dart';
 import 'package:weather_app/models/CurrentForecast.dart';
 
 import '../helper/description_code.dart';
@@ -14,7 +15,6 @@ class SavedLocation extends StatefulWidget {
   State<SavedLocation> createState() => _SavedLocationState();
 }
 
-// ignore: camel_case_types
 class _SavedLocationState extends State<SavedLocation> {
   @override
   Widget build(BuildContext context) {
@@ -36,12 +36,13 @@ class _SavedLocationState extends State<SavedLocation> {
           },
           children: [
             for (int index = 0; index < listLocationsWeather.length; index += 1)
-              location(index, listLocationsWeather[index])
+              location(index, listLocationsWeather[index], weatherData)
           ]),
     );
   }
 
-  Widget location(int index, CurrentForeCast currentForeCast) {
+  Widget location(
+      int index, CurrentForeCast currentForeCast, WeatherProvider weatherData) {
     var temp = currentForeCast.main?.temp;
 
     var iconCode = currentForeCast.weather?[0].icon;
@@ -118,11 +119,13 @@ class _SavedLocationState extends State<SavedLocation> {
               right: 14,
               child: GestureDetector(
                 onTap: () {
-                  print("delete location");
+                  dbHelper.delete(index);
+                  weatherData.deleteCurrentWeatherLocation(index);
                 },
                 child: const Icon(
                   Icons.remove_circle,
                   size: 20,
+                  color: Colors.red,
                 ),
               ),
             ),

@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
+import 'package:weather_app/main.dart';
+
+import '../database/database_helper.dart';
+import '../provider/WeatherProvider.dart';
 
 @override
-Widget locationPopulation() {
+Widget locationPopulation(BuildContext context) {
+  final weatherData = Provider.of<WeatherProvider>(context);
+  Position _currentPosition;
   List<String> location = [
     "Hanoi",
     "Nepal",
@@ -15,9 +23,9 @@ Widget locationPopulation() {
     flex: 1,
     child: Column(
       children: [
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Row(
-          children: [
+          children: const [
             Text(
               "VỊ TRÍ XUNG QUANH",
               style: TextStyle(
@@ -28,11 +36,10 @@ Widget locationPopulation() {
             ),
             Icon(
               Icons.location_pin,
-              // color: Colors.white,
             )
           ],
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Container(
             // width: MediaQuery.of(context).size.width,
             height: 38,
@@ -45,27 +52,32 @@ Widget locationPopulation() {
                     style: BorderStyle.solid),
                 borderRadius: BorderRadius.circular(100)),
             padding: EdgeInsets.symmetric(vertical: 0.0),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: new Icon(Icons.location_pin),
-                  alignment: Alignment.center,
-                  padding: new EdgeInsets.all(0.0),
-                  onPressed: () {},
-                ),
-                Text("Cho phép Quyền vị trí",
-                    style: TextStyle(fontWeight: FontWeight.w600))
-              ],
+            child: InkWell(
+              onTap: () {
+                _getCurrentPosition(context, weatherData);
+              },
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: new Icon(Icons.location_pin),
+                    alignment: Alignment.center,
+                    padding: new EdgeInsets.all(0.0),
+                    onPressed: () {},
+                  ),
+                  const Text("Cho phép Quyền vị trí",
+                      style: TextStyle(fontWeight: FontWeight.w600))
+                ],
+              ),
             )),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Row(
-          children: [
+          children: const [
             Text("CÁC VỊ TRÍ PHỔ BIẾN",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
             Icon(Icons.local_fire_department)
           ],
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         Flexible(
@@ -100,4 +112,63 @@ Widget day() {
     title: Text("Hanoi"),
     subtitle: Text("Hanoi/VietName"),
   );
+}
+
+Future<bool> _handleLocationPermission(BuildContext context) async {
+  bool serviceEnabled;
+  LocationPermission permission;
+
+  serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) {
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text(
+            'Location services are disabled. Please enable the services')));
+    return false;
+  }
+  permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Location permissions are denied')));
+      return false;
+    }
+  }
+  if (permission == LocationPermission.deniedForever) {
+    // ignore: use_build_context_synchronously
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text(
+            'Location permissions are permanently denied, we cannot request permissions.')));
+    return false;
+  }
+  return true;
+}
+
+Future<void> _getCurrentPosition(
+    BuildContext context, WeatherProvider weatherData) async {
+  final hasPermission = await _handleLocationPermission(context);
+
+  if (!hasPermission) return;
+  await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+      .then((Position position) async {
+    print("POSITION ${position}");
+
+    Map<String, dynamic> row = {
+      DatabaseHelper.columnLat: position.latitude,
+      DatabaseHelper.columnLng: position.longitude
+    };
+    await dbHelper.insert(row);
+    weatherData.updateCurrentWeatherLocation(
+        Geo(position.latitude, position.longitude));
+    Navigator.pop(context);
+  }).catchError((e) {
+    debugPrint(e);
+  });
+}
+
+class Geo {
+  var lat;
+  var lon;
+
+  Geo(this.lat, this.lon);
 }

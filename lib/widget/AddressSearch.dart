@@ -3,15 +3,36 @@ import 'package:flutter/material.dart';
 import '../network/PlaceService.dart';
 import 'package:http/http.dart' as http;
 
+import 'PopularLocation.dart';
+
 class AddressSearch extends SearchDelegate<Suggestion> {
   PlaceApiProvider apiClient = new PlaceApiProvider();
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    return ThemeData(
+      primaryColor: Colors.white,
+      hintColor: Colors.grey,
+      primarySwatch: Colors.blueGrey,
+      inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(80.0),
+        ),
+        contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 18),
+        filled: true,
+        fillColor: Colors.grey[200],
+        hintStyle: const TextStyle(
+          color: Colors.grey,
+        ),
+      ),
+    );
+  }
 
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
-        tooltip: 'Clear',
-        icon: const Icon(Icons.clear),
+        icon: const Icon(Icons.search),
         onPressed: () {
           query = '';
         },
@@ -29,20 +50,16 @@ class AddressSearch extends SearchDelegate<Suggestion> {
       builder: (context, snapshot) => query == ''
           ? Container(
               padding: const EdgeInsets.all(16.0),
-              child: const Text('Enter your address'),
+              child: locationPopulation(context),
             )
           : snapshot.hasData
               ? ListView.builder(
                   itemBuilder: (context, index) {
                     return ListTile(
-                      title: Text(
-                          // (snapshot.data?[index]?['properties'])['formatted']),
-                          "${(snapshot.data?[index] as Suggestion).formatted}"),
+                      title:
+                          Text((snapshot.data?[index] as Suggestion).formatted),
                       onTap: () {
-                        close(
-                            context,
-                            // snapshot.data?[index]?['properties'] as Suggestion);
-                            snapshot.data?[index] as Suggestion);
+                        close(context, snapshot.data?[index] as Suggestion);
                       },
                     );
                   },
@@ -54,15 +71,9 @@ class AddressSearch extends SearchDelegate<Suggestion> {
 
   @override
   Widget? buildLeading(BuildContext context) {
-    return IconButton(
-      tooltip: 'Back',
-      icon: Icon(Icons.arrow_back),
-      onPressed: () {
-        // var result = null;
-        Navigator.pop(context);
-        // close(context, result);
-      },
-    );
+    return InkWell(
+        onTap: () => {Navigator.pop(context)},
+        child: const Icon(Icons.arrow_back_ios));
   }
 
   @override

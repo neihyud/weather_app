@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/models/AirQuality.dart';
+import 'package:weather_app/models/AirPollution.dart';
 
-Widget infoWeather(AirQuality airQuality) {
-  int idx_hour = DateTime.now().hour;
-  var pm10 = airQuality.hourly?.pm10?[idx_hour];
-  var co = airQuality.hourly?.carbonMonoxide?[idx_hour];
-  var no2 = airQuality.hourly?.nitrogenDioxide?[idx_hour];
-  var so2 = airQuality.hourly?.sulphurDioxide?[idx_hour];
-  var o3 = airQuality.hourly?.ozone?[idx_hour];
-  var pm2 = airQuality.hourly?.pm25?[idx_hour];
-  var uv = airQuality.hourly?.uvIndex?[idx_hour];
-  var dust = airQuality.hourly?.dust?[idx_hour];
+Widget infoAirPollution(AirPollution airPollution) {
+  var pm10 = airPollution.components?.pm10;
+  var co = airPollution.components?.co;
+  var no2 = airPollution.components?.no2;
+  var so2 = airPollution.components?.so2;
+  var o3 = airPollution.components?.o3;
+  var pm2 = airPollution.components?.pm25;
+  var nh3 = airPollution.components?.nh3;
+  var no = airPollution.components?.no;
 
   return Container(
     // height: 125,
@@ -39,7 +38,7 @@ Widget infoWeather(AirQuality airQuality) {
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.black)),
                     TextSpan(
-                        text: "${pm10} μg/m³",
+                        text: "$pm10 μg/m³",
                         style: const TextStyle(
                             fontWeight: FontWeight.normal,
                             color: Colors.black)),
@@ -58,7 +57,7 @@ Widget infoWeather(AirQuality airQuality) {
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.black)),
                     TextSpan(
-                        text: "${pm2} μg/m³",
+                        text: "$pm2 μg/m³",
                         style: const TextStyle(
                             fontWeight: FontWeight.normal,
                             color: Colors.black)),
@@ -77,7 +76,7 @@ Widget infoWeather(AirQuality airQuality) {
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.black)),
                     TextSpan(
-                        text: "${no2} μg/m³",
+                        text: "$no2 μg/m³",
                         style: const TextStyle(
                             fontWeight: FontWeight.normal,
                             color: Colors.black)),
@@ -96,7 +95,7 @@ Widget infoWeather(AirQuality airQuality) {
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.black)),
                     TextSpan(
-                        text: "${so2} μg/m³",
+                        text: "$so2 μg/m³",
                         style: const TextStyle(
                             fontWeight: FontWeight.normal,
                             color: Colors.black)),
@@ -117,7 +116,7 @@ Widget infoWeather(AirQuality airQuality) {
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.black)),
                     TextSpan(
-                        text: "${o3} μg/m³",
+                        text: "$o3 μg/m³",
                         style: const TextStyle(
                             fontWeight: FontWeight.normal,
                             color: Colors.black)),
@@ -136,7 +135,7 @@ Widget infoWeather(AirQuality airQuality) {
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.black)),
                     TextSpan(
-                        text: "${co} μg/m³",
+                        text: "$co μg/m³",
                         style: const TextStyle(
                             fontWeight: FontWeight.normal,
                             color: Colors.black)),
@@ -151,11 +150,11 @@ Widget infoWeather(AirQuality airQuality) {
                   text: '',
                   children: <TextSpan>[
                     const TextSpan(
-                        text: 'UV :  ',
+                        text: 'NO :  ',
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.black)),
                     TextSpan(
-                        text: "${uv}",
+                        text: "$no μg/m³",
                         style: const TextStyle(
                             fontWeight: FontWeight.normal,
                             color: Colors.black)),
@@ -170,11 +169,11 @@ Widget infoWeather(AirQuality airQuality) {
                   text: '',
                   children: <TextSpan>[
                     const TextSpan(
-                        text: 'Bụi :  ',
+                        text: 'NH\u2083 :  ',
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.black)),
                     TextSpan(
-                        text: "${dust} μg/m³",
+                        text: "$nh3 μg/m³",
                         style: const TextStyle(
                             fontWeight: FontWeight.normal,
                             color: Colors.black)),

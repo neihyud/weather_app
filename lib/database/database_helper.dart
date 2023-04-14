@@ -8,7 +8,7 @@ class DatabaseHelper {
 
   static const table = 'Geometry';
 
-  static const columnId = '_id';
+  static const columnId = 'id';
   static const columnLat = 'lat';
   static const columnLng = 'lng';
 
@@ -55,8 +55,6 @@ class DatabaseHelper {
     return Sqflite.firstIntValue(results) ?? 0;
   }
 
-  // We are assuming here that the id column in the map is set. The other
-  // column values will be used to update the row.
   Future<int> update(Map<String, dynamic> row) async {
     int id = row[columnId];
     return await _db.update(
@@ -67,13 +65,13 @@ class DatabaseHelper {
     );
   }
 
-  // Deletes the row specified by the id. The number of affected rows is
-  // returned. This should be 1 as long as the row exists.
-  Future<int> delete(int id) async {
-    return await _db.delete(
-      table,
-      where: '$columnId = ?',
-      whereArgs: [id],
-    );
+  Future<void> delete(int idx) async {
+    // return await _db.delete(
+    //   table,
+    //   where: 'id = ?',
+    //   whereArgs: [rowid],
+    // );
+    return await _db.execute(
+        "DELETE FROM $table WHERE id = (SELECT id FROM $table LIMIT 1 OFFSET ${idx - 1});");
   }
 }

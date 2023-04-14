@@ -8,7 +8,6 @@ import 'package:weather_app/network/PlaceService.dart';
 
 import 'database/database_helper.dart';
 import 'main.dart';
-// import 'models/Suggestion.dart';
 import 'models/CurrentForecast.dart';
 import 'network/WeatherApiClient.dart';
 
@@ -22,7 +21,6 @@ class LocationPage extends StatefulWidget {
 class _PositionPageState extends State<LocationPage> {
   bool _isEdit = false;
   bool _isOpenMap = false;
-  // List<Weather> data_weather = [];
 
   openMap() {
     setState(() {
@@ -79,7 +77,7 @@ class _PositionPageState extends State<LocationPage> {
                 SavedLocation(isEdit: _isEdit)
               // listLocation(_isEdit, data_weather)
               else
-                locationPopulation(),
+                locationPopulation(context),
             ],
           )),
     );
@@ -110,8 +108,7 @@ class _SearchBarState extends State<SearchBar> {
   @override
   Widget build(BuildContext context) {
     final weatherData = Provider.of<WeatherProvider>(context);
-    List<CurrentForeCast> listLocationsWeather =
-        weatherData.getCurrentLocationsWeather;
+
     return Row(
       children: [
         if (widget.isOpenMap)
@@ -130,14 +127,14 @@ class _SearchBarState extends State<SearchBar> {
             controller: _searchController,
             decoration: InputDecoration(
               hintText: 'Search...',
-              filled: true, //<-- SEE HERE
+              filled: true,
               isDense: true,
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 0.0, horizontal: 18.0),
               border:
                   OutlineInputBorder(borderRadius: BorderRadius.circular(100)),
               suffixIcon: IconButton(
-                icon: const Icon(Icons.map),
+                icon: const Icon(Icons.gps_fixed),
                 onPressed: () {
                   // widget.isOpenMap = !isOpenMap;
                   widget.onSearch(_searchController.text);
@@ -158,23 +155,7 @@ class _SearchBarState extends State<SearchBar> {
 
                 final id = await dbHelper.insert(row);
 
-                CurrentForeCast currentForeCast = await WeatherApiClient()
-                    .dataForecastCurrent(
-                        row['columnLat'], row['columnLng'], null);
-
-                print("currentForeCast ${currentForeCast.toJson()}");
-                weatherData.updateCurrentLocationsWeather(result);
-
-                setState(() {
-                  print("run listLocation");
-                  listLocationsWeather = [
-                    ...listLocationsWeather,
-                    currentForeCast
-                  ];
-
-                  print(
-                      "LENGTH CURRENT WEATHER ${weatherData.getCurrentLocationsWeather.length}");
-                });
+                weatherData.updateCurrentWeatherLocation(result);
               }
             },
           ),

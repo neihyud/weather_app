@@ -2,16 +2,15 @@ import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:weather_app/models/AirQuality.dart';
 import 'package:weather_app/models/CurrentForecast.dart';
 import 'package:weather_app/provider/WeatherProvider.dart';
+import 'package:weather_app/models/AirPollution.dart';
 import 'database/database_helper.dart';
 import 'location.dart';
-import 'package:weather_app/network/WeatherApiClient.dart';
 import 'package:weather_app/widget/CurrentWeather.dart';
 import 'package:weather_app/widget/DailyWeather.dart';
 import 'package:weather_app/widget/HourlyWeather.dart';
-import 'package:weather_app/widget/AirQuality.dart';
+import 'package:weather_app/widget/AirPollution.dart';
 
 import 'models/DailyForecast.dart';
 import 'models/HourlyForecast.dart';
@@ -57,8 +56,8 @@ class _MyHomePageState extends State<MyHomePage> {
   CurrentForeCast? currentForeCast;
   List<HourlyForeCast>? hourlyForeCast;
   List<DailyForeCast>? dailyForeCast;
+  AirPollution? airPollution;
 
-  AirQuality airQuality = new AirQuality();
   bool _isLoading = false;
 
   @override
@@ -96,6 +95,9 @@ class _MyHomePageState extends State<MyHomePage> {
       dailyForeCast = jsonDecode(dataWeather[2].body)['list']
           .map<DailyForeCast>((day) => DailyForeCast.fromJson(day))
           .toList();
+
+      airPollution =
+          AirPollution.fromJson(jsonDecode(dataWeather[3].body)['list'][0]);
     }
 
     return Scaffold(
@@ -124,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     const SizedBox(height: 16),
                     dailyWeather(dailyForeCast!),
                     const SizedBox(height: 16),
-                    infoWeather(airQuality),
+                    infoAirPollution(airPollution!),
                   ],
                 ),
               ));

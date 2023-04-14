@@ -11,7 +11,6 @@ Widget currentWeather(CurrentForeCast currentForeCast) {
 
   var des = currentForeCast.weather?[0].main;
 
-  // var temp = double.parse(currentForeCast.main?.temp).round();
   var temp = currentForeCast.main?.temp?.round();
 
   return Container(

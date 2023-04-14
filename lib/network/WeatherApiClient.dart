@@ -3,23 +3,9 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:weather_app/models/CurrentForecast.dart';
-import 'package:weather_app/models/AirQuality.dart';
 import 'dart:async';
 
 class WeatherApiClient {
-  static const String urlAir =
-      "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=21.02&longitude=105.84&hourly=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone,dust,uv_index,ammonia";
-
-  Future<AirQuality> getAirQuality() async {
-    final response = await http.get(Uri.parse(urlAir));
-
-    if (response.statusCode == 200) {
-      return AirQuality.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to load Weather');
-    }
-  }
-
   Future<dynamic> dataForecastDetail(var lat, var lon) async {
     if (lat == null || lon == null) {
       lat = '21';
