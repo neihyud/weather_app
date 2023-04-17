@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:weather_app/location.dart';
 // import '../models/Suggestion.dart';
+import '../database/database_helper.dart';
+import '../main.dart';
+import '../models/CurrentForecast.dart';
 import '../network/PlaceService.dart';
 import 'package:http/http.dart' as http;
 
+import '../provider/WeatherProvider.dart';
 import 'PopularLocation.dart';
 
 class AddressSearch extends SearchDelegate<Suggestion> {
@@ -33,8 +39,23 @@ class AddressSearch extends SearchDelegate<Suggestion> {
     return [
       IconButton(
         icon: const Icon(Icons.search),
-        onPressed: () {
-          query = '';
+        onPressed: () async {
+          print("Query: $query");
+          final weatherData =
+              Provider.of<WeatherProvider>(context, listen: false);
+
+          weatherData.updateCurrentWeatherLocation(Geo(null, null), query);
+          CurrentForeCast currentForeCast =
+              weatherData.getGeoLastCurrentLocation();
+
+          Map<String, dynamic> row = {
+            DatabaseHelper.columnLat: currentForeCast.coord?.lat,
+            DatabaseHelper.columnLng: currentForeCast.coord?.lon
+          };
+
+          await dbHelper.insert(row);
+
+          Navigator.pop(context);
         },
       )
     ];

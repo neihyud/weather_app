@@ -36,7 +36,7 @@ class WeatherApiClient {
     if (lat != null && lon != null) {
       subQuery = "lat=$lat&lon=$lon";
     } else {
-      subQuery = "q?$q";
+      subQuery = "q=$q";
     }
 
     String apiCurrentForecast =

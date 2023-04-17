@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:weather_app/models/CurrentForecast.dart';
 import 'package:weather_app/helper/description_code.dart';
 
-Widget currentWeather(CurrentForeCast currentForeCast) {
+Widget  currentWeather(CurrentForeCast currentForeCast) {
   var windSpeed = currentForeCast.wind?.speed;
 
   var humidity = currentForeCast.main?.humidity;
@@ -24,7 +24,8 @@ Widget currentWeather(CurrentForeCast currentForeCast) {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          getDesCode((des).toString()),
+          // getDesCode((des).toString()),
+          Text("${currentForeCast.name}"),
           Text(
             "${temp.toString()} °C",
             style: const TextStyle(fontSize: 60, fontWeight: FontWeight.w800),

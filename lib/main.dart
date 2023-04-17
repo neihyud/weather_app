@@ -146,20 +146,11 @@ class buildMenuItem extends StatelessWidget {
         trailing: const Icon(Icons.arrow_forward_ios),
         title: const Text('Sửa địa điểm'),
         onTap: () {
+          Navigator.pop(context);
           Navigator.push(context, MaterialPageRoute(builder: (context) {
             return const LocationPage();
           }));
         },
-      ),
-      ListTile(
-        trailing: const Icon(Icons.arrow_forward_ios),
-        title: const Text('Item 1'),
-        onTap: () {},
-      ),
-      ListTile(
-        trailing: const Icon(Icons.arrow_forward_ios),
-        title: const Text('Item 1'),
-        onTap: () {},
       ),
       ListTile(
         trailing: const Icon(Icons.arrow_forward_ios),

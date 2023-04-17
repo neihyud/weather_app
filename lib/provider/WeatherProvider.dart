@@ -6,8 +6,14 @@ import 'package:http/http.dart' as http;
 import 'package:weather_app/main.dart';
 import 'package:weather_app/models/CurrentForecast.dart';
 import 'package:weather_app/network/WeatherApiClient.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../database/database_helper.dart';
 
 class WeatherProvider with ChangeNotifier {
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  bool isLoading = false;
+
   List<dynamic> _dataForecastDetail = [];
 
   List<dynamic> get getDataForeCastDetail {
@@ -21,10 +27,21 @@ class WeatherProvider with ChangeNotifier {
   }
 
   Future<dynamic> dataForecastDetail(var lat, var lon) async {
-    if (lat == null || lon == null) {
-      lat = '21';
-      lon = '105';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? current = [];
+    bool isExistCurrent = prefs.containsKey('current');
+    if (!isExistCurrent) {
+      if (lat == null && lon == null) {
+        lat = '21';
+        lon = '105';
+      }
+      await prefs.setStringList('current', <String>[lat, lon]);
     }
+
+    current = await prefs.getStringList('current');
+
+    lat = current?[0];
+    lon = current?[1];
 
     String apiCurrentForecast =
         'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&units=metric&appid=${dotenv.env['API_KEY_WEATHER']}';
@@ -72,17 +89,59 @@ class WeatherProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateCurrentWeatherLocation(var result) async {
-    CurrentForeCast currentForeCast = await WeatherApiClient()
-        .dataForecastCurrent(result.lat, result.lon, null);
+  void updateCurrentWeatherLocation(var result, var q) async {
+    CurrentForeCast currentForeCast =
+        await WeatherApiClient().dataForecastCurrent(result.lat, result.lon, q);
+
+    if (currentForeCast.coord?.lat == null) {
+      return;
+    }
 
     _currentWeatherLocations = [..._currentWeatherLocations, currentForeCast];
 
+    isLoading = false;
     notifyListeners();
   }
 
   void deleteCurrentWeatherLocation(var idx) async {
     _currentWeatherLocations.removeAt(idx);
+    notifyListeners();
+  }
+
+  void loading() {
+    isLoading = true;
+    notifyListeners();
+  }
+
+  addListStringToSF(var lat, var lon) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setStringList('current', [lat, lon]);
+  }
+
+  getListStringValuesSF() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('current');
+  }
+
+  getGeoLastCurrentLocation() {
+    int len = _currentWeatherLocations.length;
+    return _currentWeatherLocations[len - 1];
+  }
+
+  changeIndexCurrentLocationsWeather(int oldIndex, int newIndex) async {
+    if (oldIndex < newIndex) {
+      newIndex -= 1;
+    }
+
+    final CurrentForeCast item = _currentWeatherLocations.removeAt(oldIndex);
+    _currentWeatherLocations.insert(newIndex, item);
+
+    Map<String, dynamic> row = {
+      DatabaseHelper.columnLat: item.coord?.lat,
+      DatabaseHelper.columnLng: item.coord?.lon
+    };
+
+    await dbHelper.changeIndex(oldIndex, newIndex, row);
     notifyListeners();
   }
 }

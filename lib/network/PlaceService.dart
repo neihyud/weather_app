@@ -1,7 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-import '../models/Suggestion.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 // // For storing our result

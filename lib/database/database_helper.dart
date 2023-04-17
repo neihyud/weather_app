@@ -33,23 +33,14 @@ class DatabaseHelper {
           ''');
   }
 
-  // Helper methods
-
-  // Inserts a row in the database where each key in the Map is a column name6
-  // and the value is the column value. The return value is the id of the
-  // inserted row.
   Future<int> insert(Map<String, dynamic> row) async {
     return await _db.insert(table, row);
   }
 
-  // All of the rows are returned as a list of maps, where each map is
-  // a key-value list of columns.
   Future<List<Map<String, dynamic>>> queryAllRows() async {
     return await _db.query(table);
   }
 
-  // All of the methods (insert, query, update, delete) can also be done using
-  // raw SQL commands. This method uses a raw query to give the row count.
   Future<int> queryRowCount() async {
     final results = await _db.rawQuery('SELECT COUNT(*) FROM $table');
     return Sqflite.firstIntValue(results) ?? 0;
@@ -66,12 +57,17 @@ class DatabaseHelper {
   }
 
   Future<void> delete(int idx) async {
-    // return await _db.delete(
-    //   table,
-    //   where: 'id = ?',
-    //   whereArgs: [rowid],
-    // );
     return await _db.execute(
         "DELETE FROM $table WHERE id = (SELECT id FROM $table LIMIT 1 OFFSET ${idx - 1});");
   }
+
+  Future<void> changeIndex(int oldIndex, int newIndex,  Map<String, dynamic> row) async {
+    // _currentWeatherLocations.insert(newIndex, item);
+    await _db.execute(
+        "DELETE FROM $table WHERE id = (SELECT id FROM $table LIMIT 1 OFFSET ${oldIndex - 1});");
+    await _db.execute(
+     "INSERT INTO $table WHERE id = (SELECT id FROM $table LIMIT 1 OFFSET ${oldIndex - 1});"
+    );
+  }
 }
+
