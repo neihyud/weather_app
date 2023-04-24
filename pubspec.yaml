@@ -21,6 +21,7 @@ dependencies:
   flutter_dotenv: ^5.0.2
   provider: ^6.0.5
   home_widget: ^0.2.0+1
+  flutter_svg: ^2.0.5
   
 dev_dependencies:
   flutter_test:
@@ -31,4 +32,6 @@ flutter:
 
   assets: 
     - assets/img/
+    - assets/background/
+    - assets/icons/
     - lib/.env

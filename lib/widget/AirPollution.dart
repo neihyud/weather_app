@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/helper/description_air_pollution.dart';
 import 'package:weather_app/models/AirPollution.dart';
 
 Widget infoAirPollution(AirPollution airPollution) {
@@ -10,20 +11,24 @@ Widget infoAirPollution(AirPollution airPollution) {
   var pm2 = airPollution.components?.pm25;
   var nh3 = airPollution.components?.nh3;
   var no = airPollution.components?.no;
+  var aqi = airPollution.main?.aqi;
 
   return Container(
     // height: 125,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(10),
-      color: Color.fromARGB(50, 56, 66, 82),
+      color: const Color.fromARGB(50, 56, 66, 82),
     ),
-    padding: EdgeInsets.all(10),
+    padding: const EdgeInsets.all(10),
     child: Column(
       children: [
         const Text(
           "Chất lượng không khí",
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+          style: TextStyle(
+              fontWeight: FontWeight.w500, fontSize: 20, color: Colors.white),
         ),
+        const SizedBox(height: 10),
+        getDesAirPopulation(aqi.toString()),
         const SizedBox(height: 20),
         Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
           Column(
@@ -36,12 +41,12 @@ Widget infoAirPollution(AirPollution airPollution) {
                     const TextSpan(
                         text: 'PM\u2081\u2080 :  ',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.black)),
+                            fontWeight: FontWeight.bold, color: Colors.white)),
                     TextSpan(
                         text: "$pm10 μg/m³",
                         style: const TextStyle(
                             fontWeight: FontWeight.normal,
-                            color: Colors.black)),
+                            color: Colors.white)),
                   ],
                 ),
               ),
@@ -55,12 +60,12 @@ Widget infoAirPollution(AirPollution airPollution) {
                     const TextSpan(
                         text: 'PM\u2082.\u2085 :  ',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.black)),
+                            fontWeight: FontWeight.bold, color: Colors.white)),
                     TextSpan(
                         text: "$pm2 μg/m³",
                         style: const TextStyle(
                             fontWeight: FontWeight.normal,
-                            color: Colors.black)),
+                            color: Colors.white)),
                   ],
                 ),
               ),
@@ -74,12 +79,12 @@ Widget infoAirPollution(AirPollution airPollution) {
                     const TextSpan(
                         text: 'NO\u2082 :  ',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.black)),
+                            fontWeight: FontWeight.bold, color: Colors.white)),
                     TextSpan(
                         text: "$no2 μg/m³",
                         style: const TextStyle(
                             fontWeight: FontWeight.normal,
-                            color: Colors.black)),
+                            color: Colors.white)),
                   ],
                 ),
               ),
@@ -93,12 +98,12 @@ Widget infoAirPollution(AirPollution airPollution) {
                     const TextSpan(
                         text: 'SO\u2082 :  ',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.black)),
+                            fontWeight: FontWeight.bold, color: Colors.white)),
                     TextSpan(
                         text: "$so2 μg/m³",
                         style: const TextStyle(
                             fontWeight: FontWeight.normal,
-                            color: Colors.black)),
+                            color: Colors.white)),
                   ],
                 ),
               ),
@@ -114,12 +119,12 @@ Widget infoAirPollution(AirPollution airPollution) {
                     const TextSpan(
                         text: 'O\u2083 :  ',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.black)),
+                            fontWeight: FontWeight.bold, color: Colors.white)),
                     TextSpan(
                         text: "$o3 μg/m³",
                         style: const TextStyle(
                             fontWeight: FontWeight.normal,
-                            color: Colors.black)),
+                            color: Colors.white)),
                   ],
                 ),
               ),
@@ -133,12 +138,12 @@ Widget infoAirPollution(AirPollution airPollution) {
                     const TextSpan(
                         text: 'CO :  ',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.black)),
+                            fontWeight: FontWeight.bold, color: Colors.white)),
                     TextSpan(
                         text: "$co μg/m³",
                         style: const TextStyle(
                             fontWeight: FontWeight.normal,
-                            color: Colors.black)),
+                            color: Colors.white)),
                   ],
                 ),
               ),
@@ -152,12 +157,12 @@ Widget infoAirPollution(AirPollution airPollution) {
                     const TextSpan(
                         text: 'NO :  ',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.black)),
+                            fontWeight: FontWeight.bold, color: Colors.white)),
                     TextSpan(
                         text: "$no μg/m³",
                         style: const TextStyle(
                             fontWeight: FontWeight.normal,
-                            color: Colors.black)),
+                            color: Colors.white)),
                   ],
                 ),
               ),
@@ -171,12 +176,12 @@ Widget infoAirPollution(AirPollution airPollution) {
                     const TextSpan(
                         text: 'NH\u2083 :  ',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.black)),
+                            fontWeight: FontWeight.bold, color: Colors.white)),
                     TextSpan(
                         text: "$nh3 μg/m³",
                         style: const TextStyle(
                             fontWeight: FontWeight.normal,
-                            color: Colors.black)),
+                            color: Colors.white)),
                   ],
                 ),
               ),

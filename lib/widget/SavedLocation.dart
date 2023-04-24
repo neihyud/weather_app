@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:weather_app/main.dart';
 import 'package:weather_app/models/CurrentForecast.dart';
 
-import '../helper/icon_weather.dart';
 import '../provider/WeatherProvider.dart';
 
 class SavedLocation extends StatefulWidget {
@@ -22,15 +21,21 @@ class _SavedLocationState extends State<SavedLocation> {
     final weatherData = Provider.of<WeatherProvider>(context);
     var listLocationsWeather = weatherData.getCurrentLocationsWeather;
 
-    return Expanded(
-      child: ReorderableListView(
-          onReorder: (int oldIndex, int newIndex) {
-            weatherData.changeIndexCurrentLocationsWeather(oldIndex, newIndex);
-          },
-          children: [
-            for (int index = 0; index < listLocationsWeather.length; index += 1)
-              location(index, listLocationsWeather[index], weatherData)
-          ]),
+    return Theme(
+      data: ThemeData(canvasColor: Colors.transparent),
+      child: Expanded(
+        child: ReorderableListView(
+            onReorder: (int oldIndex, int newIndex) {
+              weatherData.changeIndexCurrentLocationsWeather(
+                  oldIndex, newIndex);
+            },
+            children: [
+              for (int index = 0;
+                  index < listLocationsWeather.length;
+                  index += 1)
+                location(index, listLocationsWeather[index], weatherData)
+            ]),
+      ),
     );
   }
 
@@ -62,7 +67,11 @@ class _SavedLocationState extends State<SavedLocation> {
         Navigator.pop(context)
       },
       child: Row(children: [
-        if (widget.isEdit) const Icon(Icons.home),
+        if (widget.isEdit)
+          const Icon(
+            Icons.home,
+            color: Colors.white,
+          ),
         Flexible(
           flex: 1,
           child: Stack(children: [
@@ -73,57 +82,46 @@ class _SavedLocationState extends State<SavedLocation> {
               padding:
                   const EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
               decoration: BoxDecoration(
-                  border: Border.all(
-                      width: 1,
-                      color: const Color.fromARGB(255, 2, 2, 2),
-                      style: BorderStyle.solid),
-                  borderRadius: BorderRadius.circular(10)),
+                  image: const DecorationImage(
+                    image: AssetImage("assets/img/sun_widget.png"),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(15)),
               height: 100,
               child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "$name",
-                          style: const TextStyle(fontWeight: FontWeight.w700),
-                        ),
-                        Text(
-                          "$day/$month    $hour:$minute",
-                          style: const TextStyle(fontWeight: FontWeight.w600),
-                        )
-                      ],
+                    Text(
+                      "${temp?.round().toString()}°",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 50,
+                          color: Colors.white),
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Row(children: [
-                          Image.asset(
-                            "assets/img/${iconCode.toString()}.png",
-                            // height: 50,
-                            // width: 50,
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            "${temp?.round().toString()}  °C",
-                            style: const TextStyle(fontWeight: FontWeight.w700),
-                          )
-                        ]),
-                        Text("$desCode")
-                        // getDesCode(iconCode.toString())
-                      ],
+                    const Divider(
+                      height: 20,
+                      thickness: 5,
+                      indent: 20,
+                      endIndent: 0,
+                      color: Colors.white,
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: Text(
+                        "$name",
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 20,
+                            color: Color.fromARGB(255, 255, 255, 255)),
+                      ),
                     ),
                   ]),
             ),
             if (widget.isEdit)
               Positioned(
                 top: 6,
-                right: 14,
+                right: 16,
                 child: GestureDetector(
                   onTap: () {
                     dbHelper.delete(index);
@@ -131,8 +129,8 @@ class _SavedLocationState extends State<SavedLocation> {
                   },
                   child: const Icon(
                     Icons.remove_circle,
-                    size: 20,
-                    color: Colors.red,
+                    size: 24,
+                    color: Color.fromARGB(255, 247, 73, 60),
                   ),
                 ),
               ),

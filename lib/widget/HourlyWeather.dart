@@ -6,10 +6,10 @@ import '../models/HourlyForecast.dart';
 Widget hourlyWeather(List<HourlyForeCast> hourlyForeCast) {
   return Container(
       height: 150,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: const Color.fromARGB(50, 56, 66, 82),
-      ),
+      // decoration: BoxDecoration(
+      //   borderRadius: BorderRadius.circular(10),
+      //   color: const Color.fromARGB(50, 56, 66, 82),
+      // ),
       child: ListView.builder(
           itemCount: 24,
           scrollDirection: Axis.horizontal,
@@ -26,14 +26,18 @@ Widget hourlyWeather(List<HourlyForeCast> hourlyForeCast) {
             var temp = hourlyForeCast[index].main?.temp;
             var iconCode = hourlyForeCast[index].weather?[0].icon;
 
-            return box(Colors.transparent, currentTime, temp, iconCode);
+            return box(currentTime, temp, iconCode);
           }));
 }
 
-Widget box(Color backgroundColor, String time, var tmp, var iconCode) {
+Widget box(String time, var tmp, var iconCode) {
   return Container(
-      margin: const EdgeInsets.all(10),
-      color: backgroundColor,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: const Color.fromARGB(50, 56, 66, 82),
+      ),
+      margin: const EdgeInsets.all(5),
+      padding: const EdgeInsets.all(10),
       alignment: Alignment.center,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

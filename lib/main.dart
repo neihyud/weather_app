@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:weather_app/models/CurrentForecast.dart';
 import 'package:weather_app/provider/WeatherProvider.dart';
 import 'package:weather_app/models/AirPollution.dart';
+import 'package:weather_app/widget/ParamsWeather.dart';
 import 'database/database_helper.dart';
 import 'location.dart';
 import 'package:weather_app/widget/CurrentWeather.dart';
@@ -79,22 +80,27 @@ class _MyHomePageState extends State<MyHomePage> {
   List<DailyForeCast>? dailyForeCast;
   AirPollution? airPollution;
 
-  bool _isLoading = false;
+  dynamic windSpeed;
+  dynamic humidity;
+  dynamic cloudiness;
+  dynamic des;
+  dynamic temp;
+  dynamic location;
 
-  int _counter = 0;
+  bool _isLoading = false;
 
   void loadData() async {
     await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0)
         .then((value) {
-      _counter = value!;
+      // _counter = value!;
     });
 
     HomeWidget.getWidgetData<int>('_location', defaultValue: 25).then((value) {
-      _counter = value!;
+      // _counter = value!;
     });
 
     HomeWidget.getWidgetData<int>('_temp', defaultValue: 0).then((value) {
-      _counter = value!;
+      // _counter = value!;
     });
 
     setState(() {});
@@ -110,7 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _incrementCounter() {
     setState(() {
-      _counter++;
+      // _counter++;
     });
     updateAppWidget();
   }
@@ -146,6 +152,18 @@ class _MyHomePageState extends State<MyHomePage> {
       currentForeCast =
           CurrentForeCast.fromJson(jsonDecode(dataWeather[0].body));
 
+      windSpeed = currentForeCast?.wind?.speed;
+
+      humidity = currentForeCast?.main?.humidity;
+
+      cloudiness = currentForeCast?.clouds?.all;
+
+      des = currentForeCast?.weather?[0].main;
+
+      temp = currentForeCast?.main?.temp?.round();
+
+      location = currentForeCast?.name;
+
       hourlyForeCast = jsonDecode(dataWeather[1].body)['list']
           .map<HourlyForeCast>((hour) => HourlyForeCast.fromJson(hour))
           .toList();
@@ -159,8 +177,15 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     return Scaffold(
-        appBar: AppBar(),
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
         drawer: Drawer(
+          // backgroundColor: Colors.transparent,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           child: ListView(
             padding: EdgeInsets.zero,
             children: const <Widget>[
@@ -175,10 +200,26 @@ class _MyHomePageState extends State<MyHomePage> {
               )
             : Container(
                 padding: const EdgeInsets.all(16.0),
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/img/sun_widget.png"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
                 child: ListView(
                   scrollDirection: Axis.vertical,
                   children: <Widget>[
-                    currentWeather(currentForeCast!),
+                    currentWeather(des, temp, location),
+                    const SizedBox(height: 16),
+                    paramsWeather(windSpeed, humidity, cloudiness),
+                    // const SizedBox(height: 16),
+                    // const Text(
+                    //   "Today",
+                    //   style: TextStyle(
+                    //       fontSize: 25,
+                    //       fontWeight: FontWeight.w700,
+                    //       color: Colors.white70),
+                    // ),
                     const SizedBox(height: 16),
                     hourlyWeather(hourlyForeCast!),
                     const SizedBox(height: 16),

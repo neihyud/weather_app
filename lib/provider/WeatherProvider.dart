@@ -39,7 +39,7 @@ class WeatherProvider with ChangeNotifier {
       await prefs.setStringList('current', <String>[lat, lon]);
     }
 
-    current = await prefs.getStringList('current');
+    current = prefs.getStringList('current');
 
     lat = current?[0];
     lon = current?[1];

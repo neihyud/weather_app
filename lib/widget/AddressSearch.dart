@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 
 import '../provider/WeatherProvider.dart';
 import 'PopularLocation.dart';
+import 'Search.dart';
 
 class AddressSearch extends SearchDelegate<Suggestion> {
   PlaceApiProvider apiClient = new PlaceApiProvider();
@@ -40,7 +41,6 @@ class AddressSearch extends SearchDelegate<Suggestion> {
       IconButton(
         icon: const Icon(Icons.search),
         onPressed: () async {
-          print("Query: $query");
           final weatherData =
               Provider.of<WeatherProvider>(context, listen: false);
 

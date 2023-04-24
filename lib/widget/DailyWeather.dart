@@ -48,7 +48,10 @@ Widget day(String weekday, var iconCode, var tempMin, var tempMax) {
       SizedBox(
         width: 100,
         child: Text(weekday,
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
+            style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+                color: Colors.white)),
       ),
       getIcon(iconCode),
       Wrap(
@@ -57,12 +60,12 @@ Widget day(String weekday, var iconCode, var tempMin, var tempMax) {
           Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
             Text(
               "${tempMin.toString()}°",
-              style: const TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20, color: Colors.white),
             ),
-            const Text("  /  ", style: TextStyle(fontSize: 20)),
+            const Text("  /  ",
+                style: TextStyle(fontSize: 20, color: Colors.white)),
             Text("${tempMax.toString()}°",
-                style: const TextStyle(
-                    fontSize: 20, color: Color.fromARGB(150, 0, 0, 0))),
+                style: const TextStyle(fontSize: 20, color: Colors.white)),
           ]),
         ],
       )
