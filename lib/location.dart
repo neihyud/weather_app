@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:weather_app/provider/WeatherProvider.dart';
-import 'package:weather_app/widget/AddressSearch.dart';
 import 'package:weather_app/widget/SavedLocation.dart';
-import 'package:weather_app/network/PlaceService.dart';
 import 'package:weather_app/widget/Search.dart';
-
-import 'database/database_helper.dart';
-import 'main.dart';
-import 'models/CurrentForecast.dart';
 
 class LocationPage extends StatefulWidget {
   const LocationPage({super.key});

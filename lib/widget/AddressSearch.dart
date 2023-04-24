@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:weather_app/location.dart';
-// import '../models/Suggestion.dart';
 import '../database/database_helper.dart';
 import '../main.dart';
 import '../models/CurrentForecast.dart';
 import '../network/PlaceService.dart';
-import 'package:http/http.dart' as http;
 
 import '../provider/WeatherProvider.dart';
 import 'PopularLocation.dart';
@@ -18,13 +15,20 @@ class AddressSearch extends SearchDelegate<Suggestion> {
   @override
   ThemeData appBarTheme(BuildContext context) {
     return ThemeData(
-      primaryColor: Colors.white,
+      scaffoldBackgroundColor: const Color.fromARGB(255, 68, 70, 124),
+      appBarTheme: const AppBarTheme(
+          elevation: 0, color: Color.fromARGB(255, 68, 70, 124)),
       hintColor: Colors.grey,
-      primarySwatch: Colors.blueGrey,
       inputDecorationTheme: InputDecorationTheme(
+        disabledBorder: InputBorder.none,
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(80.0),
+          borderSide: const BorderSide(color: Colors.transparent),
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(80.0),
         ),
+        focusColor: Colors.transparent,
         contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 18),
         filled: true,
         fillColor: Colors.grey[200],
@@ -53,9 +57,8 @@ class AddressSearch extends SearchDelegate<Suggestion> {
             DatabaseHelper.columnLng: currentForeCast.coord?.lon
           };
 
-          await dbHelper.insert(row);
-
           Navigator.pop(context);
+          dbHelper.insert(row);
         },
       )
     ];
@@ -71,14 +74,18 @@ class AddressSearch extends SearchDelegate<Suggestion> {
       builder: (context, snapshot) => query == ''
           ? Container(
               padding: const EdgeInsets.all(16.0),
-              child: locationPopulation(context),
+              decoration: const BoxDecoration(),
+              child: popularLocation(context),
             )
           : snapshot.hasData
               ? ListView.builder(
                   itemBuilder: (context, index) {
                     return ListTile(
-                      title:
-                          Text((snapshot.data?[index] as Suggestion).formatted),
+                      title: Text(
+                        (snapshot.data?[index] as Suggestion).formatted,
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 16),
+                      ),
                       onTap: () {
                         close(context, snapshot.data?[index] as Suggestion);
                       },
@@ -86,7 +93,11 @@ class AddressSearch extends SearchDelegate<Suggestion> {
                   },
                   itemCount: snapshot.data?.length,
                 )
-              : Container(child: Text('Loading...')),
+              : const Center(
+                  child: Text(
+                  'Loading...',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                )),
     );
   }
 
@@ -99,8 +110,10 @@ class AddressSearch extends SearchDelegate<Suggestion> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return Container(
-      child: Text('Empty'),
-    );
+    return const Center(
+        child: Text(
+      'Empty...',
+      style: TextStyle(color: Colors.white, fontSize: 20),
+    ));
   }
 }

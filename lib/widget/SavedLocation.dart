@@ -73,7 +73,6 @@ class _SavedLocationState extends State<SavedLocation> {
             color: Colors.white,
           ),
         Flexible(
-          flex: 1,
           child: Stack(children: [
             Container(
               margin: widget.isEdit

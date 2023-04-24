@@ -8,7 +8,7 @@ import '../provider/WeatherProvider.dart';
 import 'AddressSearch.dart';
 
 class SearchBar extends StatelessWidget {
-  SearchBar({super.key});
+  const SearchBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +50,7 @@ class SearchBar extends StatelessWidget {
                     DatabaseHelper.columnLng: result.lon
                   };
 
-                  final id = await dbHelper.insert(row);
+                  dbHelper.insert(row);
 
                   weatherData.updateCurrentWeatherLocation(result, null);
                 }

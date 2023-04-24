@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
-import 'package:weather_app/main.dart';
 
-import '../database/database_helper.dart';
+
 import '../provider/WeatherProvider.dart';
 
 @override
-Widget locationPopulation(BuildContext context) {
+Widget popularLocation(BuildContext context) {
   final weatherData = Provider.of<WeatherProvider>(context);
   Position _currentPosition;
   List<String> location = [
@@ -28,28 +27,31 @@ Widget locationPopulation(BuildContext context) {
         Row(
           children: const [
             Text("CÁC VỊ TRÍ PHỔ BIẾN",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-            Icon(Icons.local_fire_department)
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white)),
+            Icon(
+              Icons.local_fire_department,
+              color: Colors.white,
+            )
           ],
         ),
         const SizedBox(
           height: 10,
         ),
         Flexible(
+          fit: FlexFit.tight,
+          flex: 1,
           child: Container(
             decoration: BoxDecoration(
                 border: Border.all(
-                    color: Colors.black12,
-                    width: 1.0,
-                    style: BorderStyle.solid),
+                    color: Colors.white, width: 1.0, style: BorderStyle.solid),
                 borderRadius: BorderRadius.circular(10)),
             child: GridView.count(
                 childAspectRatio: (1 / .3),
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
-                // primary: false,
-                // padding: const EdgeInsets.all(20),
-                // crossAxisSpacing: 10,
                 mainAxisSpacing: 0,
                 crossAxisCount: 2,
                 children: location.map((e) {
@@ -64,7 +66,13 @@ Widget locationPopulation(BuildContext context) {
 
 Widget day() {
   return const ListTile(
-    title: Text("Hanoi"),
-    subtitle: Text("Hanoi/VietName"),
+    title: Text(
+      "Hanoi",
+      style: TextStyle(color: Colors.white),
+    ),
+    subtitle: Text(
+      "Hanoi/VietName",
+      style: TextStyle(color: Colors.white),
+    ),
   );
 }
