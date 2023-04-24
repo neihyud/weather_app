@@ -24,9 +24,7 @@ class _SavedLocationState extends State<SavedLocation> {
 
     return Expanded(
       child: ReorderableListView(
-          // buildDefaultDragHandles: false,
           onReorder: (int oldIndex, int newIndex) {
-
             weatherData.changeIndexCurrentLocationsWeather(oldIndex, newIndex);
           },
           children: [
@@ -103,7 +101,11 @@ class _SavedLocationState extends State<SavedLocation> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Row(children: [
-                          getIcon(iconCode.toString()),
+                          Image.asset(
+                            "assets/img/${iconCode.toString()}.png",
+                            // height: 50,
+                            // width: 50,
+                          ),
                           const SizedBox(
                             width: 10,
                           ),

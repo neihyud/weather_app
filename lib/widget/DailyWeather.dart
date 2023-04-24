@@ -27,6 +27,7 @@ Widget dailyWeather(List<DailyForeCast> dailyForeCast) {
         itemBuilder: (BuildContext context, index) {
           var dt = dailyForeCast[index].dt;
           String currentWeekDay = getDayOfWeek(dt);
+          if (index == 0) currentWeekDay = "Today";
           var iconCode = dailyForeCast[index].weather?[0].icon;
           var tempMin = dailyForeCast[index].temp?.min?.round();
           var tempMax = dailyForeCast[index].temp?.max?.round();

@@ -147,6 +147,7 @@ Future<bool> _handleLocationPermission(BuildContext context) async {
 
   serviceEnabled = await Geolocator.isLocationServiceEnabled();
   if (!serviceEnabled) {
+    // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(
             'Location services are disabled. Please enable the services')));

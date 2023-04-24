@@ -15,13 +15,34 @@ import 'package:weather_app/widget/AirPollution.dart';
 import 'models/DailyForecast.dart';
 import 'models/HourlyForecast.dart';
 
+import 'package:home_widget/home_widget.dart';
+
 final dbHelper = DatabaseHelper();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dbHelper.init();
   await dotenv.load(fileName: "lib/.env");
+
+  HomeWidget.registerBackgroundCallback(backgroundCallback);
   runApp(const MyApp());
+}
+
+//
+Future<void> backgroundCallback(Uri? uri) async {
+  if (uri?.host == 'updatecounter') {
+    int counter = 0;
+    await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0)
+        .then((value) {
+      counter = value!;
+      counter++;
+    });
+    await HomeWidget.saveWidgetData<int>('_counter', counter);
+    await HomeWidget.updateWidget(
+        //this must the class name used in .Kt
+        name: 'HomeScreenWidgetProvider',
+        iOSName: 'HomeScreenWidgetProvider');
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -60,8 +81,45 @@ class _MyHomePageState extends State<MyHomePage> {
 
   bool _isLoading = false;
 
+  int _counter = 0;
+
+  void loadData() async {
+    await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0)
+        .then((value) {
+      _counter = value!;
+    });
+
+    HomeWidget.getWidgetData<int>('_location', defaultValue: 25).then((value) {
+      _counter = value!;
+    });
+
+    HomeWidget.getWidgetData<int>('_temp', defaultValue: 0).then((value) {
+      _counter = value!;
+    });
+
+    setState(() {});
+  }
+
+  Future<void> updateAppWidget() async {
+    await HomeWidget.saveWidgetData<String>('_location', currentForeCast?.name);
+    await HomeWidget.saveWidgetData<String>(
+        '_temp', currentForeCast?.main?.temp?.round().toString());
+    await HomeWidget.updateWidget(
+        name: 'HomeScreenWidgetProvider', iOSName: 'HomeScreenWidgetProvider');
+  }
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+    updateAppWidget();
+  }
+
   @override
   void initState() {
+    // HomeWidget.widgetClicked.listen((Uri? uri) => loadData());
+    // loadData(); // This will load data from widget every time app is opened
+
     setState(() {
       _isLoading = true;
     });

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:http/http.dart' as http;
 import 'package:weather_app/main.dart';
 import 'package:weather_app/models/CurrentForecast.dart';
@@ -65,6 +66,17 @@ class WeatherProvider with ChangeNotifier {
 
       _dataForecastDetail = result;
       notifyListeners();
+
+      CurrentForeCast currentForeCast =
+          CurrentForeCast.fromJson(jsonDecode(result[0].body));
+
+      await HomeWidget.saveWidgetData<String>(
+          '_location', currentForeCast.name);
+      await HomeWidget.saveWidgetData<String>(
+          '_temp', currentForeCast.main?.temp?.round().toString());
+      await HomeWidget.updateWidget(
+          name: 'HomeScreenWidgetProvider',
+          iOSName: 'HomeScreenWidgetProvider');
 
       return result;
     } catch (error) {
@@ -141,7 +153,7 @@ class WeatherProvider with ChangeNotifier {
       DatabaseHelper.columnLng: item.coord?.lon
     };
 
-    await dbHelper.changeIndex(oldIndex, newIndex, row);
+    // await dbHelper.changeIndex(oldIndex, newIndex, row);
     notifyListeners();
   }
 }
