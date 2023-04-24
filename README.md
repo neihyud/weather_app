@@ -1,6 +1,12 @@
 # weather_app
 
-A new Flutter project.
+- current weather
+- hourly weather
+- daily weather
+- save location
+- search auto complete
+- home widget
+- gps
 
 ## Getting Started
 
