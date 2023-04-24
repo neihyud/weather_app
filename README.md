@@ -3,7 +3,7 @@
 - current weather
 - hourly weather
 - daily weather
-- save location
+- saved location
 - search auto complete
 - home widget
 - gps
