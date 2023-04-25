@@ -45,10 +45,6 @@ class Suggestion {
     return _data;
   }
 
-  // @override
-  // String toString() {
-  //   return 'Suggestion(description: $formatted, placeId: $placeId, lat: $lat, lng: $lon)';
-  // }
 }
 
 class Timezone {

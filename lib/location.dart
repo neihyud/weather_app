@@ -61,7 +61,7 @@ class _PositionPageState extends State<LocationPage> {
           // ),
           child: Column(
             children: [
-              SearchBar(),
+              const SearchBar(),
               const SizedBox(
                 height: 15,
               ),

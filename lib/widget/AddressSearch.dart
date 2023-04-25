@@ -10,14 +10,14 @@ import 'PopularLocation.dart';
 import 'Search.dart';
 
 class AddressSearch extends SearchDelegate<Suggestion> {
-  PlaceApiProvider apiClient = new PlaceApiProvider();
+  PlaceApiProvider apiClient = PlaceApiProvider();
 
   @override
   ThemeData appBarTheme(BuildContext context) {
     return ThemeData(
-      scaffoldBackgroundColor: const Color.fromARGB(255, 68, 70, 124),
+      scaffoldBackgroundColor: Color.fromARGB(255, 51, 52, 94),
       appBarTheme: const AppBarTheme(
-          elevation: 0, color: Color.fromARGB(255, 68, 70, 124)),
+          elevation: 0, color: Color.fromARGB(255, 51, 52, 94)),
       hintColor: Colors.grey,
       inputDecorationTheme: InputDecorationTheme(
         disabledBorder: InputBorder.none,
@@ -74,7 +74,6 @@ class AddressSearch extends SearchDelegate<Suggestion> {
       builder: (context, snapshot) => query == ''
           ? Container(
               padding: const EdgeInsets.all(16.0),
-              decoration: const BoxDecoration(),
               child: popularLocation(context),
             )
           : snapshot.hasData
