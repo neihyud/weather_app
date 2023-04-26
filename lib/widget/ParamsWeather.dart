@@ -12,7 +12,7 @@ Widget paramsWeather(dynamic windSpeed, dynamic humidity, dynamic cloudiness) {
           width: 60,
           padding: const EdgeInsets.all(15),
           decoration: const BoxDecoration(
-            color: Color.fromARGB(50, 56, 66, 82),
+            color: Color.fromARGB(40, 255, 255, 255),
             borderRadius: BorderRadius.all(Radius.circular(15)),
           ),
           child: SvgPicture.asset(
@@ -27,7 +27,7 @@ Widget paramsWeather(dynamic windSpeed, dynamic humidity, dynamic cloudiness) {
           alignment: Alignment.center,
           padding: const EdgeInsets.symmetric(vertical: 5),
           decoration: const BoxDecoration(
-            color: Color.fromARGB(50, 56, 66, 82),
+            color: Color.fromARGB(40, 255, 255, 255),
             borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
           child: Text(
@@ -42,7 +42,7 @@ Widget paramsWeather(dynamic windSpeed, dynamic humidity, dynamic cloudiness) {
           width: 60,
           padding: const EdgeInsets.all(15),
           decoration: const BoxDecoration(
-            color: Color.fromARGB(50, 56, 66, 82),
+            color: Color.fromARGB(40, 255, 255, 255),
             borderRadius: BorderRadius.all(Radius.circular(15)),
           ),
           child: SvgPicture.asset(
@@ -57,7 +57,7 @@ Widget paramsWeather(dynamic windSpeed, dynamic humidity, dynamic cloudiness) {
           alignment: Alignment.center,
           padding: const EdgeInsets.symmetric(vertical: 5),
           decoration: const BoxDecoration(
-            color: Color.fromARGB(50, 56, 66, 82),
+            color: Color.fromARGB(40, 255, 255, 255),
             borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
           child: Text(
@@ -72,7 +72,7 @@ Widget paramsWeather(dynamic windSpeed, dynamic humidity, dynamic cloudiness) {
           width: 60,
           padding: const EdgeInsets.all(15),
           decoration: const BoxDecoration(
-            color: Color.fromARGB(50, 56, 66, 82),
+            color: Color.fromARGB(40, 255, 255, 255),
             borderRadius: BorderRadius.all(Radius.circular(15)),
           ),
           child: SvgPicture.asset(
@@ -87,7 +87,7 @@ Widget paramsWeather(dynamic windSpeed, dynamic humidity, dynamic cloudiness) {
           alignment: Alignment.center,
           padding: const EdgeInsets.symmetric(vertical: 5),
           decoration: const BoxDecoration(
-            color: Color.fromARGB(50, 56, 66, 82),
+            color: Color.fromARGB(40, 255, 255, 255),
             borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
           child: Text(

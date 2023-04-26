@@ -108,8 +108,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> updateAppWidget() async {
     await HomeWidget.saveWidgetData<String>('_location', currentForeCast?.name);
+    await HomeWidget.saveWidgetData<String>('_temp', temp);
+
     await HomeWidget.saveWidgetData<String>(
-        '_temp', currentForeCast?.main?.temp?.round().toString());
+        '_img', "a${currentForeCast?.weather?[0].icon}");
     await HomeWidget.updateWidget(
         name: 'HomeScreenWidgetProvider', iOSName: 'HomeScreenWidgetProvider');
   }
@@ -176,59 +178,77 @@ class _MyHomePageState extends State<MyHomePage> {
           AirPollution.fromJson(jsonDecode(dataWeather[3].body)['list'][0]);
     }
 
-    return Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
+    return Container(
+      decoration: const BoxDecoration(
+          gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment(0.8, 1),
+        colors: <Color>[
+          // Color(0xfffd5e53),
+          Color.fromARGB(255, 94, 131, 186),
+          Color.fromARGB(200, 136, 161, 202),
+          // Color(0xff1f005c),
+          // Color(0xff5b0060),
+          // Color(0xff870160),
+          // Color(0xffac255e),
+          // Color(0xffca485c),
+          // Color(0xffe16b5c),
+          // Color(0xfff39060),
+          // Color(0xffffb56b),
+        ],
+        tileMode: TileMode.mirror,
+      )),
+      child: Scaffold(
+          // extendBodyBehindAppBar: true,
           backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        drawer: Drawer(
-          // backgroundColor: Colors.transparent,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: const <Widget>[
-              DrawerHeader(child: Text("Weather")),
-              buildMenuItem()
-            ],
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
           ),
-        ),
-        body: _isLoading
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : Container(
-                padding: const EdgeInsets.all(16.0),
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage("assets/img/sun_widget.png"),
-                    fit: BoxFit.cover,
+          drawer: Drawer(
+            // backgroundColor: Colors.transparent,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: const <Widget>[
+                DrawerHeader(child: Text("Weather")),
+                buildMenuItem()
+              ],
+            ),
+          ),
+          body: _isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Container(
+                  padding:
+                      const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                  decoration: const BoxDecoration(color: Colors.transparent),
+                  child: ListView(
+                    scrollDirection: Axis.vertical,
+                    children: <Widget>[
+                      currentWeather(des, temp, location),
+                      const SizedBox(height: 16),
+                      paramsWeather(windSpeed, humidity, cloudiness),
+                      // const SizedBox(height: 16),
+                      // const Text(
+                      //   "Today",
+                      //   style: TextStyle(
+                      //       fontSize: 25,
+                      //       fontWeight: FontWeight.w700,
+                      //       color: Colors.white70),
+                      // ),
+                      const SizedBox(height: 16),
+                      hourlyWeather(hourlyForeCast!),
+                      const SizedBox(height: 16),
+                      dailyWeather(dailyForeCast!),
+                      const SizedBox(height: 16),
+                      infoAirPollution(airPollution!),
+                    ],
                   ),
-                ),
-                child: ListView(
-                  scrollDirection: Axis.vertical,
-                  children: <Widget>[
-                    currentWeather(des, temp, location),
-                    const SizedBox(height: 16),
-                    paramsWeather(windSpeed, humidity, cloudiness),
-                    // const SizedBox(height: 16),
-                    // const Text(
-                    //   "Today",
-                    //   style: TextStyle(
-                    //       fontSize: 25,
-                    //       fontWeight: FontWeight.w700,
-                    //       color: Colors.white70),
-                    // ),
-                    const SizedBox(height: 16),
-                    hourlyWeather(hourlyForeCast!),
-                    const SizedBox(height: 16),
-                    dailyWeather(dailyForeCast!),
-                    const SizedBox(height: 16),
-                    infoAirPollution(airPollution!),
-                  ],
-                ),
-              ));
+                )),
+    );
   }
 }
 

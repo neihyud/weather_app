@@ -25,16 +25,17 @@ class HomeScreenWidgetProvider : HomeWidgetProvider() {
 
                 var tempText = widgetData.getString("_temp", "25 C")
 
-                var img = widgetData.getString("_img", "")
+                var imgPath = widgetData.getString("_img", "a01n")
 
-                var counterText = "Your counter value is: $counter"
-
-                if (counter == 0) {
-                    counterText = "You have not pressed the counter button"
-                }
+                val packageName = context.packageName
+                val imgId = context.resources.getIdentifier(imgPath, "drawable", packageName)
 
                 setTextViewText(R.id.location, locationText)
                 setTextViewText(R.id.temp, tempText)
+
+
+                setImageViewResource(R.id.image, imgId)
+                // setImageViewUri(R.id.image, Uri.parse(imgPath))
 
                 // Pending intent to update counter on button click
                 val backgroundIntent = HomeWidgetBackgroundIntent.getBroadcast(context,

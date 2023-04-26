@@ -17,7 +17,7 @@ Widget infoAirPollution(AirPollution airPollution) {
     // height: 125,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(10),
-      color: const Color.fromARGB(50, 56, 66, 82),
+      color: const Color.fromARGB(40, 255, 255, 255),
     ),
     padding: const EdgeInsets.all(10),
     child: Column(

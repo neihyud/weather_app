@@ -34,6 +34,15 @@ class DatabaseHelper {
   }
 
   Future<int> insert(Map<String, dynamic> row) async {
+    print("Row lat ${row['lat']}");
+    print("Row ${row}");
+    var result = await _db.rawQuery(
+        'SELECT * FROM $table WHERE lat=${row['lat']} and lng=${row['lng']}');
+    print("RESULT $result");
+
+    if (result.isNotEmpty) {
+      return 0;
+    }
     return await _db.insert(table, row);
   }
 
@@ -61,13 +70,12 @@ class DatabaseHelper {
         "DELETE FROM $table WHERE id = (SELECT id FROM $table LIMIT 1 OFFSET ${idx - 1});");
   }
 
-  Future<void> changeIndex(int oldIndex, int newIndex,  Map<String, dynamic> row) async {
+  Future<void> changeIndex(
+      int oldIndex, int newIndex, Map<String, dynamic> row) async {
     // _currentWeatherLocations.insert(newIndex, item);
     await _db.execute(
         "DELETE FROM $table WHERE id = (SELECT id FROM $table LIMIT 1 OFFSET ${oldIndex - 1});");
     await _db.execute(
-     "INSERT INTO $table WHERE id = (SELECT id FROM $table LIMIT 1 OFFSET ${oldIndex - 1});"
-    );
+        "INSERT INTO $table WHERE id = (SELECT id FROM $table LIMIT 1 OFFSET ${oldIndex - 1});");
   }
 }
-

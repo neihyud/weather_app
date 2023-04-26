@@ -109,7 +109,16 @@ class WeatherProvider with ChangeNotifier {
       return;
     }
 
-    _currentWeatherLocations = [..._currentWeatherLocations, currentForeCast];
+    Map<String, dynamic> row = {
+      DatabaseHelper.columnLat: currentForeCast.coord?.lat,
+      DatabaseHelper.columnLng: currentForeCast.coord?.lon
+    };
+
+    var res = await dbHelper.insert(row);
+
+    if (res != 0) {
+      _currentWeatherLocations = [..._currentWeatherLocations, currentForeCast];
+    }
 
     isLoading = false;
     notifyListeners();

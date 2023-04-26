@@ -8,7 +8,7 @@ Widget hourlyWeather(List<HourlyForeCast> hourlyForeCast) {
       height: 150,
       // decoration: BoxDecoration(
       //   borderRadius: BorderRadius.circular(10),
-      //   color: const Color.fromARGB(50, 56, 66, 82),
+      //   color: const Color.fromARGB(40, 255, 255, 255),
       // ),
       child: ListView.builder(
           itemCount: 24,
@@ -34,7 +34,7 @@ Widget box(String time, var tmp, var iconCode) {
   return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: const Color.fromARGB(50, 56, 66, 82),
+        color: const Color.fromARGB(40, 255, 255, 255),
       ),
       margin: const EdgeInsets.all(5),
       padding: const EdgeInsets.all(10),

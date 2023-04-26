@@ -1,24 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-// // For storing our result
-class Suggestion {
-  final String placeId;
-  final String formatted;
-  final String lon;
-  final String lat;
-
-  String? oldName;
-  String? country;
-  String? city;
-  Suggestion(this.placeId, this.formatted, this.lon, this.lat, this.city,
-      this.country, this.oldName);
-
-  @override
-  String toString() {
-    return 'Suggestion(description: $formatted, placeId: $placeId)';
-  }
-}
+import '../models/Suggestion.dart';
 
 class PlaceApiProvider {
   Future<List<Suggestion>?> fetchSuggestions(String input, String lang) async {

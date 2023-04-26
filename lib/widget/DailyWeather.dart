@@ -17,7 +17,7 @@ Widget dailyWeather(List<DailyForeCast> dailyForeCast) {
     // height: 500,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(10),
-      color: const Color.fromARGB(50, 56, 66, 82),
+      color: const Color.fromARGB(40, 255, 255, 255),
     ),
     padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
     child: ListView.builder(
