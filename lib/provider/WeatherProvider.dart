@@ -65,6 +65,7 @@ class WeatherProvider with ChangeNotifier {
       ]);
 
       _dataForecastDetail = result;
+
       notifyListeners();
 
       CurrentForeCast currentForeCast =
@@ -72,8 +73,10 @@ class WeatherProvider with ChangeNotifier {
 
       await HomeWidget.saveWidgetData<String>(
           '_location', currentForeCast.name);
+
       await HomeWidget.saveWidgetData<String>(
           '_temp', currentForeCast.main?.temp?.round().toString());
+
       await HomeWidget.updateWidget(
           name: 'HomeScreenWidgetProvider',
           iOSName: 'HomeScreenWidgetProvider');
@@ -93,7 +96,7 @@ class WeatherProvider with ChangeNotifier {
     int len = data.length;
     for (var i = 0; i < len; i++) {
       CurrentForeCast currentForeCast = await WeatherApiClient()
-          .dataForecastCurrent(data[i]['lat'], data[i]['lng'], null);
+          .dataForecastCurrent(data[i]['lat'], data[i]['lon'], null);
 
       _currentWeatherLocations.insert(i, currentForeCast);
     }
@@ -109,12 +112,11 @@ class WeatherProvider with ChangeNotifier {
       return;
     }
 
-    Map<String, dynamic> row = {
-      DatabaseHelper.columnLat: currentForeCast.coord?.lat,
-      DatabaseHelper.columnLng: currentForeCast.coord?.lon
-    };
+    var lat = currentForeCast.coord?.lat;
+    var lon = currentForeCast.coord?.lon;
+    var city = currentForeCast.name;
 
-    var res = await dbHelper.insert(row);
+    var res = await dbHelper.insert(lat, lon, city);
 
     if (res != 0) {
       _currentWeatherLocations = [..._currentWeatherLocations, currentForeCast];
@@ -158,8 +160,8 @@ class WeatherProvider with ChangeNotifier {
     _currentWeatherLocations.insert(newIndex, item);
 
     Map<String, dynamic> row = {
-      DatabaseHelper.columnLat: item.coord?.lat,
-      DatabaseHelper.columnLng: item.coord?.lon
+      DatabaseHelper.lat: item.coord?.lat,
+      DatabaseHelper.lon: item.coord?.lon
     };
 
     // await dbHelper.changeIndex(oldIndex, newIndex, row);

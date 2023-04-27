@@ -5,9 +5,9 @@ Widget currentWeather(des, temp, location) {
   return Container(
     height: 180,
     decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(15),
       // const Color.fromARGB(50, 56, 66, 82),
-      color: const Color.fromARGB(40, 255, 255, 255),
+      color: const Color.fromARGB(35, 255, 255, 255),
     ),
     padding: const EdgeInsets.all(10),
     child: Column(

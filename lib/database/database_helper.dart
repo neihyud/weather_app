@@ -9,8 +9,9 @@ class DatabaseHelper {
   static const table = 'Geometry';
 
   static const columnId = 'id';
-  static const columnLat = 'lat';
-  static const columnLng = 'lng';
+  static const lat = 'lat';
+  static const lon = 'lon';
+  static const city = 'city';
 
   late Database _db;
 
@@ -29,20 +30,24 @@ class DatabaseHelper {
   // SQL code to create the database table
   Future _onCreate(Database db, int version) async {
     await db.execute('''
-          CREATE TABLE Geometry(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, lat TEXT, lng TEXT)
+          CREATE TABLE Geometry(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, lat TEXT, lon TEXT, city TEXT)
           ''');
   }
 
-  Future<int> insert(Map<String, dynamic> row) async {
-    print("Row lat ${row['lat']}");
-    print("Row ${row}");
-    var result = await _db.rawQuery(
-        'SELECT * FROM $table WHERE lat=${row['lat']} and lng=${row['lng']}');
-    print("RESULT $result");
+  Future<int> insert(dynamic lat, dynamic lon, dynamic city) async {
+    var result = await _db
+        .rawQuery('SELECT * FROM $table WHERE city="$city"');
 
     if (result.isNotEmpty) {
       return 0;
     }
+
+    Map<String, dynamic> row = {
+      DatabaseHelper.lat: lat,
+      DatabaseHelper.lon: lon,
+      DatabaseHelper.city: city,
+    };
+
     return await _db.insert(table, row);
   }
 

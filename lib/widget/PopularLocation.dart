@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 
-import '../database/database_helper.dart';
-import '../main.dart';
+import '../models/Geometry.dart';
 import '../provider/WeatherProvider.dart';
 import 'Search.dart';
 
@@ -124,13 +123,6 @@ Widget popularLocation(BuildContext context) {
         style: const TextStyle(color: Colors.white70),
       ),
       onTap: () {
-        Map<String, dynamic> row = {
-          DatabaseHelper.columnLat: lat,
-          DatabaseHelper.columnLng: lon
-        };
-
-        dbHelper.insert(row);
-
         weatherData.updateCurrentWeatherLocation(Geo(lat, lon), null);
         Navigator.pop(context);
       },
@@ -166,7 +158,7 @@ Widget popularLocation(BuildContext context) {
           padding: const EdgeInsets.only(bottom: 15, left: 5),
           decoration: BoxDecoration(
               color: const Color.fromARGB(30, 233, 249, 253),
-              borderRadius: BorderRadius.circular(10)),
+              borderRadius: BorderRadius.circular(15)),
           child: GridView.count(
               childAspectRatio: (1 / .3),
               scrollDirection: Axis.vertical,

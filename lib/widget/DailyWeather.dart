@@ -3,8 +3,8 @@ import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 
+import '../helper/icon_weather_code.dart';
 import '../models/DailyForecast.dart';
-import '../helper/icon_weather.dart';
 
 String getDayOfWeek(final day) {
   DateTime time = DateTime.fromMillisecondsSinceEpoch(day * 1000);
@@ -16,32 +16,37 @@ Widget dailyWeather(List<DailyForeCast> dailyForeCast) {
   return Container(
     // height: 500,
     decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(10),
-      color: const Color.fromARGB(40, 255, 255, 255),
+      borderRadius: BorderRadius.circular(15),
+      color: const Color.fromARGB(35, 255, 255, 255),
     ),
-    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
     child: ListView.builder(
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: 7,
         itemBuilder: (BuildContext context, index) {
-          var dt = dailyForeCast[index].dt;
+          int dt = dailyForeCast[index].dt! ;
+
           String currentWeekDay = getDayOfWeek(dt);
+
           if (index == 0) currentWeekDay = "Today";
+
           var iconCode = dailyForeCast[index].weather?[0].icon;
           var tempMin = dailyForeCast[index].temp?.min?.round();
           var tempMax = dailyForeCast[index].temp?.max?.round();
+          
           return day(
             currentWeekDay,
             iconCode,
             tempMin,
             tempMax,
+            dt
           );
         }),
   );
 }
 
-Widget day(String weekday, var iconCode, var tempMin, var tempMax) {
+Widget day(String weekday, var iconCode, var tempMin, var tempMax, var dt) {
   return SizedBox(
     height: 65,
     child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -53,7 +58,7 @@ Widget day(String weekday, var iconCode, var tempMin, var tempMax) {
                 fontSize: 18,
                 color: Colors.white)),
       ),
-      getIcon(iconCode),
+      getIconWeather(iconCode, dt),
       Wrap(
         spacing: 12.0,
         children: [

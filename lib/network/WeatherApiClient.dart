@@ -13,7 +13,7 @@ class WeatherApiClient {
     }
 
     String apiCurrentForecast =
-        'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&units=metric&lang=vi&lang=viappid=${dotenv.env['API_KEY_WEATHER']}';
+        'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&units=metric&lang=vi&appid=${dotenv.env['API_KEY_WEATHER']}';
 
     String apiHourlyForecast =
         'https://pro.openweathermap.org/data/2.5/forecast/hourly?lat=$lat&lon=$lon&units=metric&lang=vi&appid=${dotenv.env['API_KEY_WEATHER']}';

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:weather_app/helper/color_code.dart';
 import 'package:weather_app/models/CurrentForecast.dart';
 import 'package:weather_app/provider/WeatherProvider.dart';
 import 'package:weather_app/models/AirPollution.dart';
@@ -178,24 +179,18 @@ class _MyHomePageState extends State<MyHomePage> {
           AirPollution.fromJson(jsonDecode(dataWeather[3].body)['list'][0]);
     }
 
+    // List<Color> colors2 = getColor("01d");
+
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
           gradient: LinearGradient(
         begin: Alignment.topLeft,
-        end: Alignment(0.8, 1),
-        colors: <Color>[
-          // Color(0xfffd5e53),
-          Color.fromARGB(255, 94, 131, 186),
-          Color.fromARGB(200, 136, 161, 202),
-          // Color(0xff1f005c),
-          // Color(0xff5b0060),
-          // Color(0xff870160),
-          // Color(0xffac255e),
-          // Color(0xffca485c),
-          // Color(0xffe16b5c),
-          // Color(0xfff39060),
-          // Color(0xffffb56b),
-        ],
+        end: Alignment(1, 1),
+        colors: getColor("01d"),
+        // <Color>[
+        //   Color.fromARGB(255, 99, 94, 223),
+        //   Color.fromARGB(255, 122, 154, 201),
+        // ],
         tileMode: TileMode.mirror,
       )),
       child: Scaffold(
@@ -208,7 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
           drawer: Drawer(
             // backgroundColor: Colors.transparent,
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             child: ListView(
               padding: EdgeInsets.zero,
               children: const <Widget>[

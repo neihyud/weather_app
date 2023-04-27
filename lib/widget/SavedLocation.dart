@@ -81,10 +81,10 @@ class _SavedLocationState extends State<SavedLocation> {
               padding:
                   const EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
               decoration: BoxDecoration(
-                  image: const DecorationImage(
-                    image: AssetImage("assets/img/sun_widget.png"),
-                    fit: BoxFit.cover,
-                  ),
+                  // image: const DecorationImage(
+                  //   image: AssetImage("assets/img/sun_widget.png"),
+                  //   fit: BoxFit.cover,
+                  // ),
                   borderRadius: BorderRadius.circular(15)),
               height: 100,
               child: Row(

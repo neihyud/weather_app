@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../database/database_helper.dart';
 import '../main.dart';
 import '../models/CurrentForecast.dart';
+import '../models/Geometry.dart';
 import '../models/Suggestion.dart';
 import '../network/PlaceService.dart';
 
@@ -50,15 +51,7 @@ class AddressSearch extends SearchDelegate<Suggestion> {
               Provider.of<WeatherProvider>(context, listen: false);
 
           weatherData.updateCurrentWeatherLocation(Geo(null, null), query);
-          // CurrentForeCast currentForeCast =
-          //     weatherData.getGeoLastCurrentLocation();
-
-          // Map<String, dynamic> row = {
-          //   DatabaseHelper.columnLat: currentForeCast.coord?.lat,
-          //   DatabaseHelper.columnLng: currentForeCast.coord?.lon
-          // };
-
-          // dbHelper.insert(row);
+          
           Navigator.pop(context);
         },
       )
