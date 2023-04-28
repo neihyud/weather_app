@@ -13,7 +13,6 @@ String getDayOfWeek(final day) {
 
 Widget dailyWeather(List<DailyForeCast> dailyForeCast) {
   return Container(
-    // height: 500,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(15),
       color: const Color.fromARGB(35, 255, 255, 255),

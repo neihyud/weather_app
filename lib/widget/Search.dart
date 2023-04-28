@@ -93,7 +93,10 @@ Future<void> _getCurrentPosition(
     BuildContext context, WeatherProvider weatherData) async {
   final hasPermission = await _handleLocationPermission(context);
 
-  if (!hasPermission) return;
+  if (!hasPermission) {
+    weatherData.turnOffLoading();
+    return;
+  }
 
   await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
       .then((Position position) async {

@@ -14,6 +14,8 @@ Color getBackgroundWColor(String code) {
   // night - quang
   //  return const Color(0xff3167a7);
   //
+  // night - nhieu may
+  //  return const Color(0xff455e7d); 
 
   switch (code) {
     case "01": // day: sun, quang

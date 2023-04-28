@@ -43,6 +43,6 @@ Widget getDesCode(String code) {
   return Text(
     text,
     style: const TextStyle(
-        fontSize: 30, fontWeight: FontWeight.w500, color: Colors.white70),
+        fontSize: 25, fontWeight: FontWeight.w500, color: Colors.white70),
   );
 }

@@ -20,6 +20,13 @@ List<Color> getBackgroundColor(String code) {
   //      const Color(0xff3672b1),
   // ];
 
+  // nigh - nhieu may
+  //return [
+  //     const Color(0xff2c3b60),
+  //     const Color(0xff4a6583),
+  //   ];
+  //
+
   switch (code) {
     case "01": // day: sun, quang
       colors = [

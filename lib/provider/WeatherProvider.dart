@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:http/http.dart' as http;
+import 'package:weather_app/helper/type_code.dart';
 import 'package:weather_app/main.dart';
 import 'package:weather_app/models/CurrentForecast.dart';
 import 'package:weather_app/network/WeatherApiClient.dart';
@@ -77,11 +78,15 @@ class WeatherProvider with ChangeNotifier {
       HomeWidget.saveWidgetData<String>('_location', currentForeCast.name);
 
       HomeWidget.saveWidgetData<String>(
-          '_temp', currentForeCast.main?.temp?.round().toString());
+          '_temp', "${currentForeCast.main?.temp?.round().toString()}°");
 
-      HomeWidget.updateWidget(
-          name: 'HomeScreenWidgetProvider',
-          iOSName: 'HomeScreenWidgetProvider');
+      int dt = currentForeCast.dt! + currentForeCast.timezone! - 25200;
+      dynamic code = currentForeCast.weather?[0].icon;
+      String type = getTypeCode(code, dt);
+
+      HomeWidget.saveWidgetData<String>('_img', "a$type");
+
+      HomeWidget.updateWidget(name: 'HomeScreenWidgetProvider');
 
       return result;
     } catch (error) {
@@ -135,6 +140,11 @@ class WeatherProvider with ChangeNotifier {
 
   void loading() {
     isLoading = true;
+    notifyListeners();
+  }
+
+  void turnOffLoading() {
+    isLoading = false;
     notifyListeners();
   }
 
