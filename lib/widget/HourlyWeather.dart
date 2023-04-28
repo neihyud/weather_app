@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../helper/icon_weather_code.dart';
 import '../models/HourlyForecast.dart';
 
-Widget hourlyWeather(List<HourlyForeCast> hourlyForeCast) {
+Widget hourlyWeather(List<HourlyForeCast> hourlyForeCast, dynamic timezone) {
+  var gtm = timezone / 3600;
+
   return Container(
       height: 150,
       child: ListView.builder(
@@ -11,11 +13,13 @@ Widget hourlyWeather(List<HourlyForeCast> hourlyForeCast) {
           scrollDirection: Axis.horizontal,
           itemBuilder: (BuildContext context, index) {
             String? timeString = hourlyForeCast[index].dtTxt;
-            int? dt = hourlyForeCast[index].dt!;
+            int? dt = (hourlyForeCast[index].dt! + timezone) as int?;
 
             DateTime dateTime = DateTime.parse(timeString!);
 
-            String hourString = "${(dateTime.hour + 7) % 24}".padLeft(2, '0');
+            String hourString =
+                "${((dateTime.hour + gtm).ceil()) % 24}".padLeft(2, '0');
+
             String minuteString = "${dateTime.minute}".padLeft(2, '0');
 
             String currentTime = "$hourString:$minuteString";

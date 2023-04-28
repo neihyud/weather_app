@@ -23,6 +23,7 @@ final dbHelper = DatabaseHelper();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  WidgetsApp.debugAllowBannerOverride = false;
   await dbHelper.init();
   await dotenv.load(fileName: "lib/.env");
 
@@ -81,6 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<DailyForeCast>? dailyForeCast;
   AirPollution? airPollution;
 
+  dynamic timezone;
   dynamic windSpeed;
   dynamic humidity;
   dynamic cloudiness;
@@ -133,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _isLoading = true;
     });
     Provider.of<WeatherProvider>(context, listen: false)
-        .dataForecastDetail(null, null)
+        .dataForecastDetail(null, null, isReboot: true)
         .then((_) {
       setState(() {
         _isLoading = false;
@@ -151,9 +153,13 @@ class _MyHomePageState extends State<MyHomePage> {
     final weatherData = Provider.of<WeatherProvider>(context);
     final dataWeather = weatherData.getDataForeCastDetail;
 
+    String? title = '';
+
     if (!_isLoading) {
       currentForeCast =
           CurrentForeCast.fromJson(jsonDecode(dataWeather[0].body));
+
+      title = currentForeCast?.name;
 
       windSpeed = currentForeCast?.wind?.speed;
 
@@ -167,6 +173,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
       location = currentForeCast?.name;
 
+      timezone = currentForeCast?.timezone;
+
       hourlyForeCast = jsonDecode(dataWeather[1].body)['list']
           .map<HourlyForeCast>((hour) => HourlyForeCast.fromJson(hour))
           .toList();
@@ -179,26 +187,21 @@ class _MyHomePageState extends State<MyHomePage> {
           AirPollution.fromJson(jsonDecode(dataWeather[3].body)['list'][0]);
     }
 
-    // List<Color> colors2 = getColor("01d");
-
     return Container(
       decoration: BoxDecoration(
           gradient: LinearGradient(
         begin: Alignment.topLeft,
-        end: Alignment(1, 1),
-        colors: getColor("01d"),
-        // <Color>[
-        //   Color.fromARGB(255, 99, 94, 223),
-        //   Color.fromARGB(255, 122, 154, 201),
-        // ],
+        end: const Alignment(1, 1),
+        colors: getBackgroundColor("01d"),
         tileMode: TileMode.mirror,
       )),
       child: Scaffold(
-          // extendBodyBehindAppBar: true,
           backgroundColor: Colors.transparent,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
+            centerTitle: true,
+            title: Text("$title"),
           ),
           drawer: Drawer(
             // backgroundColor: Colors.transparent,
@@ -223,19 +226,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: ListView(
                     scrollDirection: Axis.vertical,
                     children: <Widget>[
-                      currentWeather(des, temp, location),
+                      currentWeather(des, temp),
                       const SizedBox(height: 16),
                       paramsWeather(windSpeed, humidity, cloudiness),
-                      // const SizedBox(height: 16),
-                      // const Text(
-                      //   "Today",
-                      //   style: TextStyle(
-                      //       fontSize: 25,
-                      //       fontWeight: FontWeight.w700,
-                      //       color: Colors.white70),
-                      // ),
                       const SizedBox(height: 16),
-                      hourlyWeather(hourlyForeCast!),
+                      hourlyWeather(hourlyForeCast!, timezone),
                       const SizedBox(height: 16),
                       dailyWeather(dailyForeCast!),
                       const SizedBox(height: 16),

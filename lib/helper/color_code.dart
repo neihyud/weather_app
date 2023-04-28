@@ -1,37 +1,43 @@
 import 'package:flutter/material.dart';
 
-List<Color> getColor(String code) {
+List<Color> getBackgroundColor(String code) {
   List<Color> colors;
   switch (code) {
-    case "01d": // day: sun
+    case "01d": // day: sun, quang
       colors = [
-        const Color.fromARGB(255, 99, 94, 223),
-        const Color.fromARGB(255, 122, 154, 201),
+        const Color(0xff0973D1),
+        const Color(0xff6ba5e4),
       ];
       break;
     case "02d": // night
       colors = [
-        const Color.fromARGB(255, 79, 108, 175),
-        const Color.fromARGB(255, 102, 119, 160),
+        const Color(0xff2c3b60),
+        const Color(0xff4a6583),
       ];
       break;
-    case "02d": // rain
+    case "02d": // nhieu may
       colors = [
-        Color.fromARGB(255, 53, 46, 122),
-        Color.fromARGB(255, 87, 66, 131),
+        const Color(0xff577eb7),
+        const Color(0xff8fa8cd),
       ];
       break;
-    case "01d": // rain
+
+    case "01d": // mua
       colors = [
-        Color.fromARGB(255, 82, 115, 148),
-        Color.fromARGB(255, 114, 140, 150),
-        // Color.fromARGB(255, 87, 66, 131),
+        const Color(0xff566783),
+        const Color(0xff7a8a99),
+      ];
+      break;
+    case "01d": // suong mu
+      colors = [
+        const Color(0xff929292),
+        const Color(0xff504f4d),
       ];
       break;
     default:
       colors = [
-        const Color.fromARGB(255, 99, 94, 223),
-        const Color.fromARGB(255, 122, 154, 201),
+        const Color(0xff0973D1),
+        const Color(0xff6ba5e4),
       ];
   }
 

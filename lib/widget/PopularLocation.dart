@@ -40,7 +40,7 @@ Widget popularLocation(BuildContext context) {
     "Attica/Hy Lạp",
     "Bagdad/Iraq",
     "Bangkok/Thái Lan",
-    "Karnataka/An Độ",
+    "Karnataka/Ấn Độ",
     "Beograd/Serbia",
     "Berlin/Đức",
     "Bogotá/Colombia",

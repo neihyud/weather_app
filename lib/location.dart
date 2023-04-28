@@ -44,9 +44,9 @@ class _PositionPageState extends State<LocationPage> {
                 _isEdit = !_isEdit;
               });
             },
-            style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-            ),
+            style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                foregroundColor: Colors.white),
             child: Text(!_isEdit ? 'Chỉnh sửa' : 'Làm xong'),
           )
         ],

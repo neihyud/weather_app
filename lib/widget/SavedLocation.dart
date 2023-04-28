@@ -62,8 +62,8 @@ class _SavedLocationState extends State<SavedLocation> {
     return GestureDetector(
       key: Key('$index'),
       onTap: () async => {
-        await weatherData.addListStringToSF(lat, lon),
         weatherData.dataForecastDetail(lat, lon),
+        weatherData.addListStringToSF(lat, lon),
         Navigator.pop(context)
       },
       child: Row(children: [

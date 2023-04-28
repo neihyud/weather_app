@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../database/database_helper.dart';
-import '../main.dart';
-import '../models/CurrentForecast.dart';
 import '../models/Geometry.dart';
 import '../models/Suggestion.dart';
 import '../network/PlaceService.dart';
 
 import '../provider/WeatherProvider.dart';
 import 'PopularLocation.dart';
-import 'Search.dart';
 
 class AddressSearch extends SearchDelegate<Suggestion> {
   PlaceApiProvider apiClient = PlaceApiProvider();
@@ -51,7 +47,7 @@ class AddressSearch extends SearchDelegate<Suggestion> {
               Provider.of<WeatherProvider>(context, listen: false);
 
           weatherData.updateCurrentWeatherLocation(Geo(null, null), query);
-          
+
           Navigator.pop(context);
         },
       )

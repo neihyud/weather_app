@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
@@ -25,7 +24,7 @@ Widget dailyWeather(List<DailyForeCast> dailyForeCast) {
         shrinkWrap: true,
         itemCount: 7,
         itemBuilder: (BuildContext context, index) {
-          int dt = dailyForeCast[index].dt! ;
+          int dt = dailyForeCast[index].dt!;
 
           String currentWeekDay = getDayOfWeek(dt);
 
@@ -34,14 +33,8 @@ Widget dailyWeather(List<DailyForeCast> dailyForeCast) {
           var iconCode = dailyForeCast[index].weather?[0].icon;
           var tempMin = dailyForeCast[index].temp?.min?.round();
           var tempMax = dailyForeCast[index].temp?.max?.round();
-          
-          return day(
-            currentWeekDay,
-            iconCode,
-            tempMin,
-            tempMax,
-            dt
-          );
+
+          return day(currentWeekDay, iconCode, tempMin, tempMax, dt);
         }),
   );
 }
@@ -59,20 +52,23 @@ Widget day(String weekday, var iconCode, var tempMin, var tempMax, var dt) {
                 color: Colors.white)),
       ),
       getIconWeather(iconCode, dt),
-      Wrap(
-        spacing: 12.0,
-        children: [
-          Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
-            Text(
-              "${tempMin.toString()}°",
-              style: const TextStyle(fontSize: 20, color: Colors.white),
-            ),
-            const Text("  /  ",
-                style: TextStyle(fontSize: 20, color: Colors.white)),
-            Text("${tempMax.toString()}°",
-                style: const TextStyle(fontSize: 20, color: Colors.white)),
-          ]),
-        ],
+      SizedBox(
+        width: 80,
+        child: Wrap(
+          spacing: 12.0,
+          children: [
+            Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
+              Text(
+                "${tempMin.toString()}°",
+                style: const TextStyle(fontSize: 20, color: Colors.white),
+              ),
+              const Text("  /  ",
+                  style: TextStyle(fontSize: 20, color: Colors.white)),
+              Text("${tempMax.toString()}°",
+                  style: const TextStyle(fontSize: 20, color: Colors.white70)),
+            ]),
+          ],
+        ),
       )
     ]),
   );

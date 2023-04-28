@@ -27,34 +27,37 @@ class WeatherProvider with ChangeNotifier {
     return [..._currentWeatherLocations];
   }
 
-  Future<dynamic> dataForecastDetail(var lat, var lon) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String>? current = [];
-    bool isExistCurrent = prefs.containsKey('current');
-    if (!isExistCurrent) {
-      if (lat == null && lon == null) {
-        lat = '21';
-        lon = '105';
+  Future<dynamic> dataForecastDetail(var lat, var lon,
+      {bool isReboot = false}) async {
+    if (isReboot) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      List<String>? current = [];
+      bool isExistCurrent = prefs.containsKey('current');
+      if (!isExistCurrent) {
+        if (lat == null && lon == null) {
+          lat = '21';
+          lon = '105';
+        }
+        await prefs.setStringList('current', <String>[lat, lon]);
       }
-      await prefs.setStringList('current', <String>[lat, lon]);
+
+      current = prefs.getStringList('current');
+
+      lat = current?[0];
+      lon = current?[1];
     }
 
-    current = prefs.getStringList('current');
-
-    lat = current?[0];
-    lon = current?[1];
-
     String apiCurrentForecast =
-        'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&units=metric&appid=${dotenv.env['API_KEY_WEATHER']}';
+        'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&units=metric&lang=vi&appid=${dotenv.env['API_KEY_WEATHER']}';
 
     String apiHourlyForecast =
-        'https://pro.openweathermap.org/data/2.5/forecast/hourly?lat=$lat&lon=$lon&units=metric&appid=${dotenv.env['API_KEY_WEATHER']}';
+        'https://pro.openweathermap.org/data/2.5/forecast/hourly?lat=$lat&lon=$lon&units=metric&lang=vi&appid=${dotenv.env['API_KEY_WEATHER']}';
 
     String apiDailyForeCast =
-        'https://pro.openweathermap.org/data/2.5/forecast/daily?lat=$lat&lon=$lon&cnt=7&units=metric&appid=${dotenv.env['API_KEY_WEATHER']}';
+        'https://pro.openweathermap.org/data/2.5/forecast/daily?lat=$lat&lon=$lon&cnt=7&units=metric&lang=vi&appid=${dotenv.env['API_KEY_WEATHER']}';
 
     String apiAirPollution =
-        "https://api.openweathermap.org/data/2.5/air_pollution?lat=21&lon=105&appid=${dotenv.env['API_KEY_WEATHER']}";
+        "https://api.openweathermap.org/data/2.5/air_pollution?lat=$lat&lon=$lon&appid=${dotenv.env['API_KEY_WEATHER']}";
 
     try {
       List<dynamic> result = await Future.wait([
@@ -71,19 +74,17 @@ class WeatherProvider with ChangeNotifier {
       CurrentForeCast currentForeCast =
           CurrentForeCast.fromJson(jsonDecode(result[0].body));
 
-      await HomeWidget.saveWidgetData<String>(
-          '_location', currentForeCast.name);
+      HomeWidget.saveWidgetData<String>('_location', currentForeCast.name);
 
-      await HomeWidget.saveWidgetData<String>(
+      HomeWidget.saveWidgetData<String>(
           '_temp', currentForeCast.main?.temp?.round().toString());
 
-      await HomeWidget.updateWidget(
+      HomeWidget.updateWidget(
           name: 'HomeScreenWidgetProvider',
           iOSName: 'HomeScreenWidgetProvider');
 
       return result;
     } catch (error) {
-      print(error);
       throw error;
     }
   }
@@ -117,6 +118,7 @@ class WeatherProvider with ChangeNotifier {
     var city = currentForeCast.name;
 
     var res = await dbHelper.insert(lat, lon, city);
+    // var res = 1;
 
     if (res != 0) {
       _currentWeatherLocations = [..._currentWeatherLocations, currentForeCast];
