@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:weather_app/helper/color_code.dart';
+import 'package:weather_app/helper/background_code.dart';
 import 'package:weather_app/models/CurrentForecast.dart';
 import 'package:weather_app/provider/WeatherProvider.dart';
 import 'package:weather_app/models/AirPollution.dart';
@@ -42,9 +42,7 @@ Future<void> backgroundCallback(Uri? uri) async {
     });
     await HomeWidget.saveWidgetData<int>('_counter', counter);
     await HomeWidget.updateWidget(
-        //this must the class name used in .Kt
-        name: 'HomeScreenWidgetProvider',
-        iOSName: 'HomeScreenWidgetProvider');
+        name: 'HomeScreenWidgetProvider', iOSName: 'HomeScreenWidgetProvider');
   }
 }
 
@@ -86,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
   dynamic windSpeed;
   dynamic humidity;
   dynamic cloudiness;
-  dynamic des;
+  dynamic code = '';
   dynamic temp;
   dynamic location;
 
@@ -167,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       cloudiness = currentForeCast?.clouds?.all;
 
-      des = currentForeCast?.weather?[0].main;
+      code = currentForeCast?.weather?[0].icon;
 
       temp = currentForeCast?.main?.temp?.round();
 
@@ -192,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
           gradient: LinearGradient(
         begin: Alignment.topLeft,
         end: const Alignment(1, 1),
-        colors: getBackgroundColor("01d"),
+        colors: getBackgroundColor(code),
         tileMode: TileMode.mirror,
       )),
       child: Scaffold(
@@ -226,7 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: ListView(
                     scrollDirection: Axis.vertical,
                     children: <Widget>[
-                      currentWeather(des, temp),
+                      currentWeather(code, temp),
                       const SizedBox(height: 16),
                       paramsWeather(windSpeed, humidity, cloudiness),
                       const SizedBox(height: 16),

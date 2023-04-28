@@ -13,7 +13,8 @@ Widget hourlyWeather(List<HourlyForeCast> hourlyForeCast, dynamic timezone) {
           scrollDirection: Axis.horizontal,
           itemBuilder: (BuildContext context, index) {
             String? timeString = hourlyForeCast[index].dtTxt;
-            int? dt = (hourlyForeCast[index].dt! + timezone) as int?;
+
+            int? dt = (hourlyForeCast[index].dt! + timezone - 25200) as int?;
 
             DateTime dateTime = DateTime.parse(timeString!);
 

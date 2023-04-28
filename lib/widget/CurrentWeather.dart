@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:weather_app/helper/description_code.dart';
+import 'package:weather_app/helper/des_weather_code.dart';
 
-Widget currentWeather(des, temp) {
+Widget currentWeather(code, temp) {
   return Container(
     height: 250,
     decoration: BoxDecoration(
@@ -20,19 +20,13 @@ Widget currentWeather(des, temp) {
             alignment: Alignment.center,
           ),
           Text(
-            "${temp.toString()}",
+            temp.toString(),
             style: const TextStyle(
                 fontSize: 100,
                 fontWeight: FontWeight.w400,
                 color: Colors.white),
           ),
-          Text(
-            "$des",
-            style: const TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.w500,
-                color: Colors.white70),
-          )
+          getDesCode('$code')
         ]),
   );
 }

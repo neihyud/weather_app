@@ -10,7 +10,7 @@ Widget getIconWeather(String code, int dt, {double size = 28}) {
 
   int hour = dateTime.hour;
 
-  if (hour < 5 || hour > 17) {
+  if (hour < 5 || hour > 18) {
     code = '${code}n';
   } else {
     code = '${code}d';

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:weather_app/main.dart';
 import 'package:weather_app/models/CurrentForecast.dart';
 
+import '../helper/background_widget_code.dart';
 import '../provider/WeatherProvider.dart';
 
 class SavedLocation extends StatefulWidget {
@@ -43,8 +44,7 @@ class _SavedLocationState extends State<SavedLocation> {
       int index, CurrentForeCast currentForeCast, WeatherProvider weatherData) {
     var temp = currentForeCast.main?.temp;
 
-    var iconCode = currentForeCast.weather?[0].icon;
-    var desCode = currentForeCast.weather?[0].description;
+    var iconCode = currentForeCast.weather?[0].icon; 
 
     var name = currentForeCast.name;
     DateTime dateTime =
@@ -85,6 +85,7 @@ class _SavedLocationState extends State<SavedLocation> {
                   //   image: AssetImage("assets/img/sun_widget.png"),
                   //   fit: BoxFit.cover,
                   // ),
+                  color: getBackgroundWColor('$iconCode'),
                   borderRadius: BorderRadius.circular(15)),
               height: 100,
               child: Row(

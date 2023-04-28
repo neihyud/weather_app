@@ -54,20 +54,17 @@ Widget day(String weekday, var iconCode, var tempMin, var tempMax, var dt) {
       getIconWeather(iconCode, dt),
       SizedBox(
         width: 80,
-        child: Wrap(
-          spacing: 12.0,
-          children: [
-            Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
-              Text(
-                "${tempMin.toString()}°",
-                style: const TextStyle(fontSize: 20, color: Colors.white),
-              ),
-              const Text("  /  ",
-                  style: TextStyle(fontSize: 20, color: Colors.white)),
-              Text("${tempMax.toString()}°",
-                  style: const TextStyle(fontSize: 20, color: Colors.white70)),
-            ]),
-          ],
+        child: Center(
+          child: Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
+            Text(
+              "${tempMin.toString()}°",
+              style: const TextStyle(fontSize: 20, color: Colors.white),
+            ),
+            const Text(" / ",
+                style: TextStyle(fontSize: 20, color: Colors.white)),
+            Text("${tempMax.toString()}°",
+                style: const TextStyle(fontSize: 20, color: Colors.white70)),
+          ]),
         ),
       )
     ]),
