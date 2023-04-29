@@ -6,8 +6,6 @@ Widget currentWeather(code, temp) {
     height: 250,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(15),
-      // const Color.fromARGB(50, 56, 66, 82),
-      // color: const Color.fromARGB(35, 255, 255, 255),
     ),
     padding: const EdgeInsets.all(10),
     child: Column(

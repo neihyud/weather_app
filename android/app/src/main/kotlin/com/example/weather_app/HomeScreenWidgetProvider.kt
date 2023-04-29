@@ -44,6 +44,7 @@ class HomeScreenWidgetProvider : HomeWidgetProvider() {
                         
                 // setOnClickPendingIntent(R.id.bt_update, backgroundIntent)
             }
+            
             appWidgetManager.updateAppWidget(widgetId, views)
         }
     }

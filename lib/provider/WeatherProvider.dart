@@ -35,10 +35,6 @@ class WeatherProvider with ChangeNotifier {
     return [...geoCurrent];
   }
 
-  init() async {
-    final SharedPreferences _prefs = await SharedPreferences.getInstance();
-  }
-
   Future<dynamic> dataForecastDetail(var lat, var lon,
       {bool isReboot = false}) async {
     if (isReboot) {
@@ -85,21 +81,23 @@ class WeatherProvider with ChangeNotifier {
 
       notifyListeners();
 
-      CurrentForeCast currentForeCast =
-          CurrentForeCast.fromJson(jsonDecode(result[0].body));
+      if (isReboot) {
+        CurrentForeCast currentForeCast =
+            CurrentForeCast.fromJson(jsonDecode(result[0].body));
 
-      HomeWidget.saveWidgetData<String>('_location', currentForeCast.name);
+        HomeWidget.saveWidgetData<String>('_location', currentForeCast.name);
 
-      HomeWidget.saveWidgetData<String>(
-          '_temp', "${currentForeCast.main?.temp?.round().toString()}°");
+        HomeWidget.saveWidgetData<String>(
+            '_temp', "${currentForeCast.main?.temp?.round().toString()}°");
 
-      int dt = currentForeCast.dt! + currentForeCast.timezone! - 25200;
-      dynamic code = currentForeCast.weather?[0].icon;
-      String type = getTypeCode(code, dt);
+        int dt = currentForeCast.dt! + currentForeCast.timezone! - 25200;
+        dynamic code = currentForeCast.weather?[0].icon;
+        String type = getTypeCode(code, dt);
 
-      HomeWidget.saveWidgetData<String>('_img', "a$type");
+        HomeWidget.saveWidgetData<String>('_img', "a$type");
 
-      HomeWidget.updateWidget(name: 'HomeScreenWidgetProvider');
+        HomeWidget.updateWidget(name: 'HomeScreenWidgetProvider');
+      }
 
       return result;
     } catch (error) {
@@ -145,6 +143,24 @@ class WeatherProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void updateHomeWidget(String lat, String lon) async {
+    CurrentForeCast currentForeCast =
+        await WeatherApiClient().dataForecastCurrent(lat, lon, null);
+
+    HomeWidget.saveWidgetData<String>('_location', currentForeCast.name);
+
+    HomeWidget.saveWidgetData<String>(
+        '_temp', "${currentForeCast.main?.temp?.round().toString()}°");
+
+    int dt = currentForeCast.dt! + currentForeCast.timezone! - 25200;
+    dynamic code = currentForeCast.weather?[0].icon;
+    String type = getTypeCode(code, dt);
+
+    HomeWidget.saveWidgetData<String>('_img', "a$type");
+
+    HomeWidget.updateWidget(name: 'HomeScreenWidgetProvider');
+  }
+
   void deleteCurrentWeatherLocation(var idx) async {
     _currentWeatherLocations.removeAt(idx);
     notifyListeners();
@@ -164,6 +180,7 @@ class WeatherProvider with ChangeNotifier {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setStringList('current', [lat, lon]);
     geoCurrent = [lat, lon];
+    updateHomeWidget(lat, lon);
     notifyListeners();
   }
 
@@ -171,7 +188,6 @@ class WeatherProvider with ChangeNotifier {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getStringList('current');
   }
-
 
   changeIndexCurrentLocationsWeather(int oldIndex, int newIndex) async {
     if (oldIndex < newIndex) {
@@ -181,10 +197,10 @@ class WeatherProvider with ChangeNotifier {
     final CurrentForeCast item = _currentWeatherLocations.removeAt(oldIndex);
     _currentWeatherLocations.insert(newIndex, item);
 
-    Map<String, dynamic> row = {
-      DatabaseHelper.lat: item.coord?.lat,
-      DatabaseHelper.lon: item.coord?.lon
-    };
+    // Map<String, dynamic> row = {
+    //   DatabaseHelper.lat: item.coord?.lat,
+    //   DatabaseHelper.lon: item.coord?.lon
+    // };
 
     // await dbHelper.changeIndex(oldIndex, newIndex, row);
     notifyListeners();

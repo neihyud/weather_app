@@ -6,7 +6,7 @@ import '../models/HourlyForecast.dart';
 Widget hourlyWeather(List<HourlyForeCast> hourlyForeCast, dynamic timezone) {
   var gtm = timezone / 3600;
 
-  return Container(
+  return SizedBox(
       height: 150,
       child: ListView.builder(
           itemCount: 24,

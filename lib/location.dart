@@ -27,7 +27,8 @@ class _PositionPageState extends State<LocationPage> {
 
     return Scaffold(
       // extendBodyBehindAppBar: true,
-      backgroundColor: const Color.fromARGB(255, 68, 70, 124),
+      // backgroundColor: const Color.fromARGB(255, 68, 70, 124),
+      backgroundColor: const Color(0xff252338),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         leading: GestureDetector(

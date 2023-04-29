@@ -132,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _isLoading = true;
     });
-    
+
     Provider.of<WeatherProvider>(context, listen: false)
         .dataForecastDetail(null, null, isReboot: true)
         .then((_) {
@@ -199,20 +199,16 @@ class _MyHomePageState extends State<MyHomePage> {
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
+            leading: GestureDetector(
+                onTap: () {
+                  // Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return const LocationPage();
+                  }));
+                },
+                child: const Icon(Icons.add)),
             centerTitle: true,
             title: Text("$title"),
-          ),
-          drawer: Drawer(
-            // backgroundColor: Colors.transparent,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: const <Widget>[
-                DrawerHeader(child: Text("Weather")),
-                buildMenuItem()
-              ],
-            ),
           ),
           body: _isLoading
               ? const Center(
@@ -238,33 +234,5 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 )),
     );
-  }
-}
-
-// ignore: camel_case_types
-class buildMenuItem extends StatelessWidget {
-  const buildMenuItem({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(children: [
-      ListTile(
-        trailing: const Icon(Icons.arrow_forward_ios),
-        title: const Text('Sửa địa điểm'),
-        onTap: () {
-          Navigator.pop(context);
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return const LocationPage();
-          }));
-        },
-      ),
-      ListTile(
-        trailing: const Icon(Icons.arrow_forward_ios),
-        title: const Text('Vote'),
-        onTap: () {},
-      ),
-    ]);
   }
 }

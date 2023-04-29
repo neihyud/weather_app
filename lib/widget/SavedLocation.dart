@@ -62,7 +62,7 @@ class _SavedLocationState extends State<SavedLocation> {
                 padding: const EdgeInsets.all(3),
                 child: const Icon(
                   Icons.home,
-                  color: Colors.white,
+                  color: Colors.white60,
                 ),
               ),
             ),
@@ -137,7 +137,10 @@ class _SavedLocationState extends State<SavedLocation> {
               padding: const EdgeInsets.all(3),
               child: ReorderableDragStartListener(
                 index: index,
-                child: const Icon(Icons.drag_handle),
+                child: const Icon(
+                  Icons.drag_handle,
+                  color: Colors.white60,
+                ),
               ),
             ),
         ]),
