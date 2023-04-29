@@ -1,23 +1,14 @@
 import 'dart:convert';
+
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:weather_app/helper/background_code.dart';
 import 'package:weather_app/models/CurrentForecast.dart';
 import 'package:weather_app/provider/WeatherProvider.dart';
-import 'package:weather_app/models/AirPollution.dart';
-import 'package:weather_app/widget/ParamsWeather.dart';
+import 'WeatherPageView.dart';
 import 'database/database_helper.dart';
 import 'location.dart';
-import 'package:weather_app/widget/CurrentWeather.dart';
-import 'package:weather_app/widget/DailyWeather.dart';
-import 'package:weather_app/widget/HourlyWeather.dart';
-import 'package:weather_app/widget/AirPollution.dart';
-
-import 'models/DailyForecast.dart';
-import 'models/HourlyForecast.dart';
-
-import 'package:home_widget/home_widget.dart';
 
 final dbHelper = DatabaseHelper();
 
@@ -27,23 +18,7 @@ Future<void> main() async {
   await dbHelper.init();
   await dotenv.load(fileName: "lib/.env");
 
-  HomeWidget.registerBackgroundCallback(backgroundCallback);
   runApp(const MyApp());
-}
-
-//
-Future<void> backgroundCallback(Uri? uri) async {
-  if (uri?.host == 'updatecounter') {
-    int counter = 0;
-    await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0)
-        .then((value) {
-      counter = value!;
-      counter++;
-    });
-    await HomeWidget.saveWidgetData<int>('_counter', counter);
-    await HomeWidget.updateWidget(
-        name: 'HomeScreenWidgetProvider', iOSName: 'HomeScreenWidgetProvider');
-  }
 }
 
 class MyApp extends StatelessWidget {
@@ -59,85 +34,64 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blueGrey,
         ),
-        home: const MyHomePage(title: 'Home'),
+        home: const MyHomePage(),
       ),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  CurrentForeCast? currentForeCast;
-  List<HourlyForeCast>? hourlyForeCast;
-  List<DailyForeCast>? dailyForeCast;
-  AirPollution? airPollution;
-
-  dynamic timezone;
-  dynamic windSpeed;
-  dynamic humidity;
-  dynamic cloudiness;
-  dynamic code = '';
-  dynamic temp;
-  dynamic location;
-
+  final PageController _pageController = PageController(initialPage: 0);
   bool _isLoading = false;
+  String title = '';
+  String code = '';
 
-  void loadData() async {
-    await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0)
-        .then((value) {
-      // _counter = value!;
-    });
+  int currentIndex = 0;
 
-    HomeWidget.getWidgetData<int>('_location', defaultValue: 25).then((value) {
-      // _counter = value!;
-    });
+  late List<Widget> weatherWidgets;
 
-    HomeWidget.getWidgetData<int>('_temp', defaultValue: 0).then((value) {
-      // _counter = value!;
-    });
+  List<dynamic> detailDataOAllPageView = [];
 
-    setState(() {});
-  }
-
-  Future<void> updateAppWidget() async {
-    await HomeWidget.saveWidgetData<String>('_location', currentForeCast?.name);
-    await HomeWidget.saveWidgetData<String>('_temp', temp);
-
-    await HomeWidget.saveWidgetData<String>(
-        '_img', "a${currentForeCast?.weather?[0].icon}");
-    await HomeWidget.updateWidget(
-        name: 'HomeScreenWidgetProvider', iOSName: 'HomeScreenWidgetProvider');
-  }
-
-  void _incrementCounter() {
+  changePage(index) {
+    // CurrentForeCast currentForeCast =  CurrentForeCast.fromJson(jsonDecode(detailDataOfPageView[index][0].body))  ;
+    CurrentForeCast currentForeCast = detailDataOAllPageView[index][0];
     setState(() {
-      // _counter++;
+      title = currentForeCast.name!;
+      code = currentForeCast.weather![0].icon!;
     });
-    updateAppWidget();
   }
 
   @override
   void initState() {
-    // HomeWidget.widgetClicked.listen((Uri? uri) => loadData());
-    // loadData(); // This will load data from widget every time app is opened
-
     setState(() {
       _isLoading = true;
     });
 
     Provider.of<WeatherProvider>(context, listen: false)
-        .dataForecastDetail(null, null, isReboot: true)
-        .then((_) {
+        .getDetailDataOfAllPageView()
+        .then((data) {
+      List<dynamic> data_ = [...data];
+      weatherWidgets = data_.map((dataWeather) {
+        return WeatherPageView(data: dataWeather);
+      }).toList();
+
       setState(() {
         _isLoading = false;
+
+        detailDataOAllPageView =
+            Provider.of<WeatherProvider>(context, listen: false)
+                .getDetailDataOfAllPageWeather;
+
+        CurrentForeCast currentForeCast = detailDataOAllPageView[0][0];
+        title = currentForeCast.name!;
+        code = currentForeCast.weather![0].icon!;
       });
     });
 
@@ -149,43 +103,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final weatherData = Provider.of<WeatherProvider>(context);
-    final dataWeather = weatherData.getDataForeCastDetail;
-
-    String? title = '';
-
-    if (!_isLoading) {
-      currentForeCast =
-          CurrentForeCast.fromJson(jsonDecode(dataWeather[0].body));
-
-      title = currentForeCast?.name;
-
-      windSpeed = currentForeCast?.wind?.speed;
-
-      humidity = currentForeCast?.main?.humidity;
-
-      cloudiness = currentForeCast?.clouds?.all;
-
-      code = currentForeCast?.weather?[0].icon;
-
-      temp = currentForeCast?.main?.temp?.round();
-
-      location = currentForeCast?.name;
-
-      timezone = currentForeCast?.timezone;
-
-      hourlyForeCast = jsonDecode(dataWeather[1].body)['list']
-          .map<HourlyForeCast>((hour) => HourlyForeCast.fromJson(hour))
-          .toList();
-
-      dailyForeCast = jsonDecode(dataWeather[2].body)['list']
-          .map<DailyForeCast>((day) => DailyForeCast.fromJson(day))
-          .toList();
-
-      airPollution =
-          AirPollution.fromJson(jsonDecode(dataWeather[3].body)['list'][0]);
-    }
-
     return Container(
       decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -202,36 +119,32 @@ class _MyHomePageState extends State<MyHomePage> {
             leading: GestureDetector(
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const LocationPage();
+                    return LocationPage(pageController: _pageController,);
                   }));
                 },
                 child: const Icon(Icons.add)),
             centerTitle: true,
-            title: Text("$title"),
+            title: Text(title),
           ),
           body: _isLoading
               ? const Center(
                   child: CircularProgressIndicator(),
                 )
-              : Container(
-                  padding:
-                      const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                  decoration: const BoxDecoration(color: Colors.transparent),
-                  child: ListView(
-                    scrollDirection: Axis.vertical,
-                    children: <Widget>[
-                      currentWeather(code, temp),
-                      const SizedBox(height: 16),
-                      paramsWeather(windSpeed, humidity, cloudiness),
-                      const SizedBox(height: 16),
-                      hourlyWeather(hourlyForeCast!, timezone),
-                      const SizedBox(height: 16),
-                      dailyWeather(dailyForeCast!),
-                      const SizedBox(height: 16),
-                      infoAirPollution(airPollution!),
-                    ],
-                  ),
+              : PageView(
+                  onPageChanged: (index) {
+                    changePage(index);
+                  },
+                  controller: _pageController,
+                  children: weatherWidgets,
                 )),
     );
   }
+
+  // void navigateToPage(int pageIndex) {
+  //   _pageController.animateToPage(
+  //     pageIndex,
+  //     duration: Duration(milliseconds: 500),
+  //     curve: Curves.easeInOut,
+  //   );
+  // }
 }

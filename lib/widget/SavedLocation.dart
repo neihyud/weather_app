@@ -8,9 +8,9 @@ import '../provider/WeatherProvider.dart';
 
 class SavedLocation extends StatefulWidget {
   final bool isEdit;
-  final bool isLoading;
+  final PageController pageController;
   const SavedLocation(
-      {super.key, required this.isEdit, required this.isLoading});
+      {super.key, required this.isEdit, required this.pageController});
 
   @override
   State<SavedLocation> createState() => _SavedLocationState();
@@ -21,13 +21,15 @@ class _SavedLocationState extends State<SavedLocation> {
 
   @override
   Widget build(BuildContext context) {
-    final weatherData = Provider.of<WeatherProvider>(context);
-    var listLocationsWeather = weatherData.getCurrentLocationsWeather;
+    final providerWeather = Provider.of<WeatherProvider>(context);
+    var currentWeatherOfLocations =
+        providerWeather.getCurrentWeatherOfLocations;
 
-    geoCurrent = weatherData.getGeoCurrent();
+    int len = currentWeatherOfLocations.length;
 
-    Widget location(
-        int index, CurrentForeCast currentForeCast, WeatherProvider weatherData,
+    // geoCurrent = providerWeather.getGeoCurrent();
+
+    Widget location(int index, CurrentForeCast currentForeCast,
         {bool isHome = false}) {
       var lat = currentForeCast.coord?.lat.toString();
       var lon = currentForeCast.coord?.lon.toString();
@@ -40,20 +42,20 @@ class _SavedLocationState extends State<SavedLocation> {
 
       bool isHome = false;
 
-      if (geoCurrent[0] == lat && geoCurrent[1] == lon) {
-        isHome = true;
-      }
+      // if (geoCurrent[0] == lat && geoCurrent[1] == lon) {
+      //   isHome = true;
+      // }
 
       return GestureDetector(
         key: Key('$index'),
         onTap: () =>
-            {weatherData.dataForecastDetail(lat, lon), Navigator.pop(context)},
+            {widget.pageController.jumpToPage(index), Navigator.pop(context)},
         child: Row(children: [
           if (widget.isEdit && !isHome)
             InkWell(
               onDoubleTap: () {
                 // updateGeo(lat, lon);
-                weatherData.addGeoCurrentToSF(lat, lon);
+                providerWeather.addGeoCurrentToSF(lat, lon);
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -118,7 +120,7 @@ class _SavedLocationState extends State<SavedLocation> {
                   child: GestureDetector(
                     onTap: () {
                       dbHelper.delete(index);
-                      weatherData.deleteCurrentWeatherLocation(index);
+                      providerWeather.deleteCurrentWeatherLocation(index);
                     },
                     child: const Icon(
                       Icons.remove_circle,
@@ -152,17 +154,14 @@ class _SavedLocationState extends State<SavedLocation> {
       child: Expanded(
         child: ReorderableListView(
             onReorder: (int oldIndex, int newIndex) {
-              weatherData.changeIndexCurrentLocationsWeather(
+              providerWeather.changeIndexCurrentLocationsWeather(
                   oldIndex, newIndex);
             },
             children: [
-              for (int index = 0;
-                  index < listLocationsWeather.length;
-                  index += 1)
+              for (int index = 0; index < len; index += 1)
                 location(
                   index,
-                  listLocationsWeather[index],
-                  weatherData,
+                  currentWeatherOfLocations[index],
                 )
             ]),
       ),

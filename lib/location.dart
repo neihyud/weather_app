@@ -5,7 +5,9 @@ import 'package:weather_app/widget/SavedLocation.dart';
 import 'package:weather_app/widget/Search.dart';
 
 class LocationPage extends StatefulWidget {
-  const LocationPage({super.key});
+  final PageController pageController;
+
+  const LocationPage({super.key, required this.pageController});
 
   @override
   State<LocationPage> createState() => _PositionPageState();
@@ -13,21 +15,12 @@ class LocationPage extends StatefulWidget {
 
 class _PositionPageState extends State<LocationPage> {
   bool _isEdit = false;
-  bool _isLoading = false;
-
-  loading() {
-    setState(() {
-      _isLoading = !_isLoading;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    final weatherData = Provider.of<WeatherProvider>(context);
+    final providerWeather = Provider.of<WeatherProvider>(context);
 
     return Scaffold(
-      // extendBodyBehindAppBar: true,
-      // backgroundColor: const Color.fromARGB(255, 68, 70, 124),
       backgroundColor: const Color(0xff252338),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -60,14 +53,14 @@ class _PositionPageState extends State<LocationPage> {
               const SizedBox(
                 height: 15,
               ),
-              if (weatherData.isLoading)
+              if (providerWeather.isLoading)
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: const Center(
                     child: CircularProgressIndicator(),
                   ),
                 ),
-              SavedLocation(isEdit: _isEdit, isLoading: _isLoading)
+              SavedLocation(isEdit: _isEdit, pageController: widget.pageController)
             ],
           )),
     );

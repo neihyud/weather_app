@@ -10,23 +10,33 @@ import 'package:weather_app/models/CurrentForecast.dart';
 import 'package:weather_app/network/WeatherApiClient.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../database/database_helper.dart';
+import '../models/AirPollution.dart';
 
 class WeatherProvider with ChangeNotifier {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   bool isLoading = false;
 
-  List<dynamic> _dataForecastDetail = [];
+  int currentIndex = 0;
 
+  List<dynamic> _dataForecastDetail = [];
   List<dynamic> get getDataForeCastDetail {
     return [..._dataForecastDetail];
   }
 
   List<CurrentForeCast> _currentWeatherLocations = [];
-
   List<CurrentForeCast> get getCurrentLocationsWeather {
     return [..._currentWeatherLocations];
+  }
+
+  List<dynamic> _detailDataOfAllPageWeather = [];
+  List<dynamic> get getDetailDataOfAllPageWeather {
+    return [..._detailDataOfAllPageWeather];
+  }
+
+  List<CurrentForeCast> _currentWeatherOfLocations = [];
+  List<CurrentForeCast> get getCurrentWeatherOfLocations {
+    return [..._currentWeatherOfLocations];
   }
 
   List<String> geoCurrent = [];
@@ -197,12 +207,69 @@ class WeatherProvider with ChangeNotifier {
     final CurrentForeCast item = _currentWeatherLocations.removeAt(oldIndex);
     _currentWeatherLocations.insert(newIndex, item);
 
-    // Map<String, dynamic> row = {
-    //   DatabaseHelper.lat: item.coord?.lat,
-    //   DatabaseHelper.lon: item.coord?.lon
-    // };
-
-    // await dbHelper.changeIndex(oldIndex, newIndex, row);
     notifyListeners();
+  }
+
+  Future<dynamic> getDetailDataOfPageView(var lat, var lon) async {
+    String apiCurrentForecast =
+        'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&units=metric&lang=vi&appid=${dotenv.env['API_KEY_WEATHER']}';
+
+    String apiHourlyForecast =
+        'https://pro.openweathermap.org/data/2.5/forecast/hourly?lat=$lat&lon=$lon&units=metric&lang=vi&appid=${dotenv.env['API_KEY_WEATHER']}';
+
+    String apiDailyForeCast =
+        'https://pro.openweathermap.org/data/2.5/forecast/daily?lat=$lat&lon=$lon&cnt=7&units=metric&lang=vi&appid=${dotenv.env['API_KEY_WEATHER']}';
+
+    String apiAirPollution =
+        "https://api.openweathermap.org/data/2.5/air_pollution?lat=$lat&lon=$lon&appid=${dotenv.env['API_KEY_WEATHER']}";
+
+    try {
+      List<dynamic> result = await Future.wait([
+        http.get(Uri.parse(apiCurrentForecast)),
+        http.get(Uri.parse(apiHourlyForecast)),
+        http.get(Uri.parse(apiDailyForeCast)),
+        http.get(Uri.parse(apiAirPollution))
+      ]);
+
+      _detailDataOfAllPageWeather.add([
+        CurrentForeCast.fromJson(jsonDecode(result[0].body)),
+        jsonDecode(result[1].body),
+        jsonDecode(result[2].body),
+        AirPollution.fromJson(jsonDecode(result[3].body))
+      ]);
+
+      _currentWeatherOfLocations
+          .add(CurrentForeCast.fromJson(jsonDecode(result[0].body)));
+
+      notifyListeners();
+
+      return [
+        CurrentForeCast.fromJson(jsonDecode(result[0].body)),
+        jsonDecode(result[1].body),
+        jsonDecode(result[2].body),
+        AirPollution.fromJson(jsonDecode(result[3].body)['list'][0])
+      ];
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<dynamic> getDetailDataOfAllPageView() async {
+    List<Map<String, dynamic>> data = [];
+
+    data = await dbHelper.queryAllRows();
+
+    int len = data.length;
+
+    List<dynamic> resultsWeather = [];
+
+    for (var i = 0; i < len; i++) {
+      resultsWeather
+          .add(getDetailDataOfPageView(data[i]['lat'], data[i]['lon']));
+    }
+
+    List<dynamic> result = await Future.wait([...resultsWeather]);
+
+    return result;
   }
 }

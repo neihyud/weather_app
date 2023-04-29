@@ -35,8 +35,8 @@ class HomeScreenWidgetProvider : HomeWidgetProvider() {
                 setImageViewResource(R.id.image, imgId)
 
                 // Pending intent to update counter on button click
-                val backgroundIntent = HomeWidgetBackgroundIntent.getBroadcast(context,
-                        Uri.parse("myAppWidget://updatecounter"))
+                // val backgroundIntent = HomeWidgetBackgroundIntent.getBroadcast(context,
+                //        Uri.parse("myAppWidget://updatecounter"))
                         
                 // setOnClickPendingIntent(R.id.bt_update, backgroundIntent)
             }
