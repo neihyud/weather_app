@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
       create: (ctx) => WeatherProvider(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
+        title: 'Flutter App',
         theme: ThemeData(
           primarySwatch: Colors.blueGrey,
         ),
@@ -201,7 +201,6 @@ class _MyHomePageState extends State<MyHomePage> {
             elevation: 0,
             leading: GestureDetector(
                 onTap: () {
-                  // Navigator.pop(context);
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return const LocationPage();
                   }));

@@ -27,7 +27,7 @@ Widget getDesCode(String code) {
       text = "Mưa";
       break;
     case "11":
-      text = "Giông";
+      text = "Dông";
       break;
     case "13":
       text = "Tuyết";

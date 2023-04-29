@@ -15,7 +15,7 @@ Color getBackgroundWColor(String code) {
   //  return const Color(0xff3167a7);
   //
   // night - nhieu may
-  //  return const Color(0xff455e7d); 
+  //  return const Color(0xff455e7d);
 
   switch (code) {
     case "01": // day: sun, quang
@@ -36,14 +36,14 @@ Color getBackgroundWColor(String code) {
     case "10": // mua
       colors = const Color(0xff455e7d);
       break;
-    case "11": // giong - chua tim thay
-      colors = const Color(0xff455e7d);
+    case "11":
+      colors = const Color(0xff748494);
       break;
-    case "13":
+    case "13": // tuyet - chua thay
       colors = const Color(0xff87a0c9);
       break;
-    case "50":
-      colors = const Color(0xff455e7d);
+    case "50": // - suong mu - chua thay
+      colors = const Color(0xff748494);
       break;
     default:
       colors = const Color(0xff619ce0);

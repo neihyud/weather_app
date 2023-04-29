@@ -65,10 +65,10 @@ List<Color> getBackgroundColor(String code) {
         const Color(0xff7a8a99),
       ];
       break;
-    case "11": // giong - chua tthay
+    case "11":
       colors = [
-        const Color(0xff566783),
-        const Color(0xff7a8a99),
+        const Color(0xff555c66),
+        const Color(0xff3b434e),
       ];
       break;
     case "13": // tuyet - chua thay

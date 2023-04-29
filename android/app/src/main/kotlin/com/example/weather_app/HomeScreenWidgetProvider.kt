@@ -24,19 +24,15 @@ class HomeScreenWidgetProvider : HomeWidgetProvider() {
 
                 var locationText = widgetData.getString("_location", "Ha Noi")
 
-                var tempText = widgetData.getString("_temp", "25 C")
+                var tempText = widgetData.getString("_temp", "25C")
 
                 var imgPath = widgetData.getString("_img", "a01n")
-
                 val packageName = context.packageName
                 val imgId = context.resources.getIdentifier(imgPath, "drawable", packageName)
 
                 setTextViewText(R.id.location, locationText)
                 setTextViewText(R.id.temp, tempText)
-
-
                 setImageViewResource(R.id.image, imgId)
-                // setImageViewUri(R.id.image, Uri.parse(imgPath))
 
                 // Pending intent to update counter on button click
                 val backgroundIntent = HomeWidgetBackgroundIntent.getBroadcast(context,
@@ -44,7 +40,7 @@ class HomeScreenWidgetProvider : HomeWidgetProvider() {
                         
                 // setOnClickPendingIntent(R.id.bt_update, backgroundIntent)
             }
-            
+
             appWidgetManager.updateAppWidget(widgetId, views)
         }
     }
