@@ -132,6 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _isLoading = true;
     });
+    
     Provider.of<WeatherProvider>(context, listen: false)
         .dataForecastDetail(null, null, isReboot: true)
         .then((_) {

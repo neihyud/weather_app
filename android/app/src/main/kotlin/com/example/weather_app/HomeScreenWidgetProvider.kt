@@ -11,12 +11,13 @@ import es.antonborri.home_widget.HomeWidgetProvider
 
 class HomeScreenWidgetProvider : HomeWidgetProvider() {
      override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray, widgetData: SharedPreferences) {
+        
         appWidgetIds.forEach { widgetId ->
             val views = RemoteViews(context.packageName, R.layout.widget_layout).apply {
 
                 // Open App on Widget Click
-                val pendingIntent = HomeWidgetLaunchIntent.getActivity(context,
-                        MainActivity::class.java)
+                val pendingIntent = HomeWidgetLaunchIntent.getActivity(context, MainActivity::class.java)
+                
                 setOnClickPendingIntent(R.id.widget_root, pendingIntent)
 
                 val counter = widgetData.getInt("_counter", 0)

@@ -12,7 +12,7 @@ Widget getDesCode(String code) {
       text = "Quang";
       break;
     case "02":
-      text = "Nhiều mây";
+      text = "Ít mây";
       break;
     case "03":
       text = "Nhiều mây";

@@ -14,6 +14,7 @@ import '../database/database_helper.dart';
 
 class WeatherProvider with ChangeNotifier {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
   bool isLoading = false;
 
   List<dynamic> _dataForecastDetail = [];
@@ -26,6 +27,16 @@ class WeatherProvider with ChangeNotifier {
 
   List<CurrentForeCast> get getCurrentLocationsWeather {
     return [..._currentWeatherLocations];
+  }
+
+  List<String> geoCurrent = [];
+
+  getGeoCurrent() {
+    return [...geoCurrent];
+  }
+
+  init() async {
+    final SharedPreferences _prefs = await SharedPreferences.getInstance();
   }
 
   Future<dynamic> dataForecastDetail(var lat, var lon,
@@ -46,6 +57,8 @@ class WeatherProvider with ChangeNotifier {
 
       lat = current?[0];
       lon = current?[1];
+
+      geoCurrent = [lat, lon];
     }
 
     String apiCurrentForecast =
@@ -123,7 +136,6 @@ class WeatherProvider with ChangeNotifier {
     var city = currentForeCast.name;
 
     var res = await dbHelper.insert(lat, lon, city);
-    // var res = 1;
 
     if (res != 0) {
       _currentWeatherLocations = [..._currentWeatherLocations, currentForeCast];
@@ -148,20 +160,18 @@ class WeatherProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  addListStringToSF(var lat, var lon) async {
+  addGeoCurrentToSF(var lat, var lon) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setStringList('current', [lat, lon]);
+    geoCurrent = [lat, lon];
+    notifyListeners();
   }
 
-  getListStringValuesSF() async {
+  getGeoCurrentValuesSF() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('current');
+    return prefs.getStringList('current');
   }
 
-  getGeoLastCurrentLocation() {
-    int len = _currentWeatherLocations.length;
-    return _currentWeatherLocations[len - 1];
-  }
 
   changeIndexCurrentLocationsWeather(int oldIndex, int newIndex) async {
     if (oldIndex < newIndex) {

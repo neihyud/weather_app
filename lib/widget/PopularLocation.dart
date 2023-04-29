@@ -115,7 +115,7 @@ Widget popularLocation(BuildContext context) {
         "$place",
         style: const TextStyle(
           color: Colors.white,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w600,
         ),
       ),
       subtitle: Text(
@@ -163,7 +163,7 @@ Widget popularLocation(BuildContext context) {
               childAspectRatio: (1 / .3),
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
-              mainAxisSpacing: 0,
+              mainAxisSpacing: 10,
               crossAxisCount: 2,
               children: _location.asMap().entries.map((entry) {
                 int index = entry.key;

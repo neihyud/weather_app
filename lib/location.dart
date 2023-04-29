@@ -53,12 +53,6 @@ class _PositionPageState extends State<LocationPage> {
       ),
       body: Container(
           padding: const EdgeInsets.all(16.0),
-          // decoration: const BoxDecoration(
-          //   image: DecorationImage(
-          //     image: AssetImage("assets/img/sun_widget.png"),
-          //     fit: BoxFit.cover,
-          //   ),
-          // ),
           child: Column(
             children: [
               const SearchBar(),

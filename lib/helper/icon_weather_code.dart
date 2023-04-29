@@ -1,20 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:weather_app/helper/type_code.dart';
 
 Widget getIconWeather(String code, int dt, {double size = 28}) {
-  if (code.isNotEmpty) {
-    code = code.substring(0, code.length - 1);
-  }
-
-  DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(dt * 1000);
-
-  int hour = dateTime.hour;
-
-  if (hour < 5 || hour > 18) {
-    code = '${code}n';
-  } else {
-    code = '${code}d';
-  }
+  code = getTypeCode(code, dt);
 
   switch (code) {
     case "01d":
