@@ -17,34 +17,35 @@ class SavedLocation extends StatefulWidget {
 }
 
 class _SavedLocationState extends State<SavedLocation> {
-  late List<String> geoCurrent;
+  late List<String> paramsLocation;
 
   @override
   Widget build(BuildContext context) {
     final providerWeather = Provider.of<WeatherProvider>(context);
+
     var currentWeatherOfLocations =
         providerWeather.getCurrentWeatherOfLocations;
 
     int len = currentWeatherOfLocations.length;
 
-    // geoCurrent = providerWeather.getGeoCurrent();
+    paramsLocation = providerWeather.getParamsLocation();
 
     Widget location(int index, CurrentForeCast currentForeCast,
         {bool isHome = false}) {
+
       var lat = currentForeCast.coord?.lat.toString();
       var lon = currentForeCast.coord?.lon.toString();
+      String? name = currentForeCast.name;
 
       var temp = currentForeCast.main?.temp;
 
       var iconCode = currentForeCast.weather?[0].icon;
 
-      String? name = currentForeCast.name;
-
       bool isHome = false;
 
-      // if (geoCurrent[0] == lat && geoCurrent[1] == lon) {
-      //   isHome = true;
-      // }
+      if (paramsLocation[2] == name) {
+        isHome = true;
+      }
 
       return GestureDetector(
         key: Key('$index'),
@@ -54,8 +55,7 @@ class _SavedLocationState extends State<SavedLocation> {
           if (widget.isEdit && !isHome)
             InkWell(
               onDoubleTap: () {
-                // updateGeo(lat, lon);
-                providerWeather.addGeoCurrentToSF(lat, lon);
+                providerWeather.addParamsCurrentToSF(index);
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -81,7 +81,6 @@ class _SavedLocationState extends State<SavedLocation> {
                     borderRadius: BorderRadius.circular(15)),
                 height: 100,
                 child: Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         "${temp?.round().toString()}°",

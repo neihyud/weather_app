@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:home_widget/home_widget.dart';
@@ -7,13 +6,11 @@ import 'package:http/http.dart' as http;
 import 'package:weather_app/helper/type_code.dart';
 import 'package:weather_app/main.dart';
 import 'package:weather_app/models/CurrentForecast.dart';
-import 'package:weather_app/network/WeatherApiClient.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/AirPollution.dart';
 
 class WeatherProvider with ChangeNotifier {
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   bool isLoading = false;
 
   final List<dynamic> _detailDataOfAllPageWeather = [];
@@ -26,10 +23,10 @@ class WeatherProvider with ChangeNotifier {
     return [..._currentWeatherOfLocations];
   }
 
-  List<String> geoCurrent = [];
+  List<String> paramsLocation = [];
 
-  getGeoCurrent() {
-    return [...geoCurrent];
+  getParamsLocation() {
+    return [...paramsLocation];
   }
 
   void loading() {
@@ -42,34 +39,33 @@ class WeatherProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  addGeoCurrentToSF(var lat, var lon) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setStringList('current', [lat, lon]);
-    geoCurrent = [lat, lon];
-    updateHomeWidget(lat, lon);
+  addParamsCurrentToSF(int index) async {
+    CurrentForeCast currentForeCast = _currentWeatherOfLocations[index];
+
+    var lat = currentForeCast.coord?.lat;
+    var lon = currentForeCast.coord?.lon;
+    String name = currentForeCast.name.toString();
+
+    SharedPreferences.getInstance()
+        .then((pref) => pref.setStringList('current', ["$lat", "$lon", name]));
+
+    paramsLocation = ["$lat", "$lon", name];
+
+    updateHomeWidget(currentForeCast);
+
     notifyListeners();
   }
 
-  getGeoCurrentValuesSF() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getStringList('current');
-  }
-
-// ====================================================
-
-  void updateHomeWidget(String lat, String lon) async {
-    CurrentForeCast currentForeCast =
-        await WeatherApiClient().getDataCurrentWeather(lat, lon);
-
-    HomeWidget.saveWidgetData<String>('_location', currentForeCast.name);
-
-    HomeWidget.saveWidgetData<String>(
-        '_temp', "${currentForeCast.main?.temp?.round().toString()}°");
+  void updateHomeWidget(CurrentForeCast currentForeCast) async {
+    String name = currentForeCast.name.toString();
+    var temp = currentForeCast.main?.temp?.round();
 
     int dt = currentForeCast.dt! + currentForeCast.timezone! - 25200;
     dynamic code = currentForeCast.weather?[0].icon;
     String type = getTypeCode(code, dt);
 
+    HomeWidget.saveWidgetData<String>('_location', name);
+    HomeWidget.saveWidgetData<String>('_temp', "$temp°");
     HomeWidget.saveWidgetData<String>('_img', "a$type");
 
     HomeWidget.updateWidget(name: 'HomeScreenWidgetProvider');
@@ -80,11 +76,19 @@ class WeatherProvider with ChangeNotifier {
       newIndex -= 1;
     }
 
-    final CurrentForeCast item = _currentWeatherOfLocations.removeAt(oldIndex);
-    _currentWeatherOfLocations.insert(newIndex, item);
+    final CurrentForeCast currentForeCast =
+        _currentWeatherOfLocations.removeAt(oldIndex);
+    _currentWeatherOfLocations.insert(newIndex, currentForeCast);
 
-    final item2 = _detailDataOfAllPageWeather.removeAt(oldIndex);
-    _detailDataOfAllPageWeather.insert(newIndex, item2);
+    final dataPageWeather = _detailDataOfAllPageWeather.removeAt(oldIndex);
+    _detailDataOfAllPageWeather.insert(newIndex, dataPageWeather);
+
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    List<String>? cities = pref.getStringList('orderPlace');
+    final city = cities?.removeAt(oldIndex);
+    cities?.insert(newIndex, city!);
+    pref.setStringList('orderPlace', [...?cities]);
 
     notifyListeners();
   }
@@ -109,15 +113,25 @@ class WeatherProvider with ChangeNotifier {
     if (res == 0) {
       _currentWeatherOfLocations.removeLast();
       _detailDataOfAllPageWeather.removeLast();
+    } else {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      List<String>? cities = pref.getStringList('orderPlace');
+      cities?.add('${_currentWeatherOfLocations.last.name}');
+      pref.setStringList('orderPlace', [...?cities]);
     }
 
     isLoading = false;
     notifyListeners();
   }
 
-  void deleteCurrentWeatherOfLocation(var index) {
+  void deleteCurrentWeatherOfLocation(var index) async {
     _currentWeatherOfLocations.removeAt(index);
     _detailDataOfAllPageWeather.removeAt(index);
+
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    List<String>? cities = pref.getStringList('orderPlace');
+    cities?.removeAt(index);
+    pref.setStringList('orderPlace', [...?cities]);
 
     notifyListeners();
   }
@@ -191,20 +205,50 @@ class WeatherProvider with ChangeNotifier {
   }
 
   Future<dynamic> getDetailDataOfAllPageView() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
     List<Map<String, dynamic>> data = [];
 
     data = await dbHelper.queryAllRows();
 
     int len = data.length;
 
-    List<dynamic> resultsWeather = [];
+    List<dynamic> req = [];
+
+    List<String> cities = [];
 
     for (var i = 0; i < len; i++) {
-      resultsWeather
-          .add(getDetailDataOfPageView(data[i]['lat'], data[i]['lon']));
+      cities.add(data[i]['city']);
+      req.add(getDetailDataOfPageView(data[i]['lat'], data[i]['lon']));
     }
 
-    List<dynamic> result = await Future.wait([...resultsWeather]);
+    List<dynamic> result = await Future.wait([...req]);
+
+    if (!pref.containsKey('orderPlace')) {
+      pref.setStringList('orderPlace', [...cities]);
+    } else {
+      cities = [...?pref.getStringList('orderPlace')];
+    }
+
+    if (pref.containsKey('current')) {
+      paramsLocation = [...?pref.getStringList('current')];
+    } else {
+      paramsLocation = ['21', '105', 'Hanoi'];
+    }
+
+    for (var oldIndex = 0; oldIndex < cities.length; oldIndex++) {
+      String? name = _currentWeatherOfLocations[oldIndex].name;
+      int newIndex = cities.indexOf(name!);
+      if (oldIndex < newIndex) {
+        newIndex -= 1;
+      }
+      final CurrentForeCast currentForeCast =
+          _currentWeatherOfLocations.removeAt(oldIndex);
+      _currentWeatherOfLocations.insert(newIndex, currentForeCast);
+
+      final dataPageWeather = _detailDataOfAllPageWeather.removeAt(oldIndex);
+      _detailDataOfAllPageWeather.insert(newIndex, dataPageWeather);
+    }
 
     return result;
   }

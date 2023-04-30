@@ -13,9 +13,9 @@ class AddressSearch extends SearchDelegate<Suggestion> {
   @override
   ThemeData appBarTheme(BuildContext context) {
     return ThemeData(
-      scaffoldBackgroundColor: Color.fromARGB(255, 51, 52, 94),
-      appBarTheme: const AppBarTheme(
-          elevation: 0, color: Color.fromARGB(255, 51, 52, 94)),
+      scaffoldBackgroundColor: const Color(0xff252338),
+      appBarTheme:
+          const AppBarTheme(elevation: 0, color: const Color(0xff252338)),
       hintColor: Colors.grey,
       inputDecorationTheme: InputDecorationTheme(
         disabledBorder: InputBorder.none,

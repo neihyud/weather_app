@@ -84,6 +84,7 @@ Widget popularLocation(BuildContext context) {
     37.5683,
     35.6895
   ];
+ 
   var _geo_lon = [
     4.9167,
     -87.2489,
