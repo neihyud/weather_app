@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -90,20 +91,34 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            leading: GestureDetector(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return LocationPage(
-                      pageController: _pageController,
-                    );
-                  }));
-                },
-                child: const Icon(Icons.add)),
-            centerTitle: true,
-            title: Text(title),
-          ),
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return LocationPage(
+                        pageController: _pageController,
+                      );
+                    }));
+                  },
+                  child: const Icon(Icons.add)),
+              centerTitle: true,
+              title: Container(
+                  child: Column(
+                children: [
+                  Text(title),
+                  DotsIndicator(
+                    dotsCount: 5,
+                    position: 1,
+                    decorator: const DotsDecorator(
+                        color: Colors.white70,
+                        size: Size.square(5), // Inactive color
+                        activeColor: Colors.white,
+                        activeSize: Size.square(6)),
+                  ),
+                ],
+              ))),
           body: _isLoading
               ? const Center(
                   child: CircularProgressIndicator(),

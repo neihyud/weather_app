@@ -22,6 +22,7 @@ dependencies:
   provider: ^6.0.5
   home_widget: ^0.2.0+1
   flutter_svg: ^2.0.5
+  dots_indicator: ^2.1.0
   
 dev_dependencies:
   flutter_test:
