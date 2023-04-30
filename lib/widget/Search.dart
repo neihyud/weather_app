@@ -44,7 +44,7 @@ class SearchBar extends StatelessWidget {
                   delegate: AddressSearch(),
                 );
                 if (result != null) {
-                  weatherData.updateCurrentWeatherLocation(result, null);
+                  weatherData.updateCurrentWeatherOfLocation(result);
                 }
               },
             ),
@@ -100,8 +100,8 @@ Future<void> _getCurrentPosition(
 
   await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
       .then((Position position) async {
-    weatherData.updateCurrentWeatherLocation(
-        Geo(position.latitude, position.longitude), null);
+    weatherData.updateCurrentWeatherOfLocation(
+        Geo(position.latitude, position.longitude));
   }).catchError((e) {
     debugPrint(e);
   });

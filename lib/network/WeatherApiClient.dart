@@ -6,7 +6,7 @@ import 'package:weather_app/models/CurrentForecast.dart';
 import 'dart:async';
 
 class WeatherApiClient {
-  Future<dynamic> dataForecastCurrent(var lat, var lon, var q) async {
+  Future<dynamic> getDataCurrentWeather(var lat, var lon, { String q = ''}) async {
     String subQuery = '';
 
     if (lat != null && lon != null) {

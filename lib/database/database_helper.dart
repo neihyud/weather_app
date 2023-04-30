@@ -35,8 +35,7 @@ class DatabaseHelper {
   }
 
   Future<int> insert(dynamic lat, dynamic lon, dynamic city) async {
-    var result = await _db
-        .rawQuery('SELECT * FROM $table WHERE city="$city"');
+    var result = await _db.rawQuery('SELECT * FROM $table WHERE city="$city"');
 
     if (result.isNotEmpty) {
       return 0;
@@ -70,9 +69,8 @@ class DatabaseHelper {
     );
   }
 
-  Future<void> delete(int idx) async {
-    return await _db.execute(
-        "DELETE FROM $table WHERE id = (SELECT id FROM $table LIMIT 1 OFFSET ${idx - 1});");
+  Future<void> delete(String city) async {
+    return await _db.execute("DELETE FROM $table WHERE city='$city'");
   }
 
   Future<void> changeIndex(

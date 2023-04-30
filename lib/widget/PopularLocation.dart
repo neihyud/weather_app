@@ -123,7 +123,7 @@ Widget popularLocation(BuildContext context) {
         style: const TextStyle(color: Colors.white70),
       ),
       onTap: () {
-        weatherData.updateCurrentWeatherLocation(Geo(lat, lon), null);
+        weatherData.updateCurrentWeatherOfLocation(Geo(lat, lon));
         Navigator.pop(context);
       },
     );

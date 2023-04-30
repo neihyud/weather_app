@@ -38,7 +38,7 @@ class _SavedLocationState extends State<SavedLocation> {
 
       var iconCode = currentForeCast.weather?[0].icon;
 
-      var name = currentForeCast.name;
+      String? name = currentForeCast.name;
 
       bool isHome = false;
 
@@ -119,8 +119,8 @@ class _SavedLocationState extends State<SavedLocation> {
                   right: 16,
                   child: GestureDetector(
                     onTap: () {
-                      dbHelper.delete(index);
-                      providerWeather.deleteCurrentWeatherLocation(index);
+                      dbHelper.delete(name!);
+                      providerWeather.deleteCurrentWeatherOfLocation(index);
                     },
                     child: const Icon(
                       Icons.remove_circle,

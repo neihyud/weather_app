@@ -14,27 +14,14 @@ import '../models/AirPollution.dart';
 
 class WeatherProvider with ChangeNotifier {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-
   bool isLoading = false;
 
-  int currentIndex = 0;
-
-  List<dynamic> _dataForecastDetail = [];
-  List<dynamic> get getDataForeCastDetail {
-    return [..._dataForecastDetail];
-  }
-
-  List<CurrentForeCast> _currentWeatherLocations = [];
-  List<CurrentForeCast> get getCurrentLocationsWeather {
-    return [..._currentWeatherLocations];
-  }
-
-  List<dynamic> _detailDataOfAllPageWeather = [];
+  final List<dynamic> _detailDataOfAllPageWeather = [];
   List<dynamic> get getDetailDataOfAllPageWeather {
     return [..._detailDataOfAllPageWeather];
   }
 
-  List<CurrentForeCast> _currentWeatherOfLocations = [];
+  final List<CurrentForeCast> _currentWeatherOfLocations = [];
   List<CurrentForeCast> get getCurrentWeatherOfLocations {
     return [..._currentWeatherOfLocations];
   }
@@ -43,137 +30,6 @@ class WeatherProvider with ChangeNotifier {
 
   getGeoCurrent() {
     return [...geoCurrent];
-  }
-
-  Future<dynamic> dataForecastDetail(var lat, var lon,
-      {bool isReboot = false}) async {
-    if (isReboot) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      List<String>? current = [];
-      bool isExistCurrent = prefs.containsKey('current');
-      if (!isExistCurrent) {
-        if (lat == null && lon == null) {
-          lat = '21';
-          lon = '105';
-        }
-        await prefs.setStringList('current', <String>[lat, lon]);
-      }
-
-      current = prefs.getStringList('current');
-
-      lat = current?[0];
-      lon = current?[1];
-
-      geoCurrent = [lat, lon];
-    }
-
-    String apiCurrentForecast =
-        'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&units=metric&lang=vi&appid=${dotenv.env['API_KEY_WEATHER']}';
-
-    String apiHourlyForecast =
-        'https://pro.openweathermap.org/data/2.5/forecast/hourly?lat=$lat&lon=$lon&units=metric&lang=vi&appid=${dotenv.env['API_KEY_WEATHER']}';
-
-    String apiDailyForeCast =
-        'https://pro.openweathermap.org/data/2.5/forecast/daily?lat=$lat&lon=$lon&cnt=7&units=metric&lang=vi&appid=${dotenv.env['API_KEY_WEATHER']}';
-
-    String apiAirPollution =
-        "https://api.openweathermap.org/data/2.5/air_pollution?lat=$lat&lon=$lon&appid=${dotenv.env['API_KEY_WEATHER']}";
-
-    try {
-      List<dynamic> result = await Future.wait([
-        http.get(Uri.parse(apiCurrentForecast)),
-        http.get(Uri.parse(apiHourlyForecast)),
-        http.get(Uri.parse(apiDailyForeCast)),
-        http.get(Uri.parse(apiAirPollution))
-      ]);
-
-      _dataForecastDetail = result;
-
-      notifyListeners();
-
-      if (isReboot) {
-        CurrentForeCast currentForeCast =
-            CurrentForeCast.fromJson(jsonDecode(result[0].body));
-
-        HomeWidget.saveWidgetData<String>('_location', currentForeCast.name);
-
-        HomeWidget.saveWidgetData<String>(
-            '_temp', "${currentForeCast.main?.temp?.round().toString()}°");
-
-        int dt = currentForeCast.dt! + currentForeCast.timezone! - 25200;
-        dynamic code = currentForeCast.weather?[0].icon;
-        String type = getTypeCode(code, dt);
-
-        HomeWidget.saveWidgetData<String>('_img', "a$type");
-
-        HomeWidget.updateWidget(name: 'HomeScreenWidgetProvider');
-      }
-
-      return result;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  Future<dynamic> savedLocationForecast() async {
-    List<Map<String, dynamic>> data = [];
-
-    data = await dbHelper.queryAllRows();
-
-    int len = data.length;
-    for (var i = 0; i < len; i++) {
-      CurrentForeCast currentForeCast = await WeatherApiClient()
-          .dataForecastCurrent(data[i]['lat'], data[i]['lon'], null);
-
-      _currentWeatherLocations.insert(i, currentForeCast);
-    }
-
-    notifyListeners();
-  }
-
-  void updateCurrentWeatherLocation(var result, var q) async {
-    CurrentForeCast currentForeCast =
-        await WeatherApiClient().dataForecastCurrent(result.lat, result.lon, q);
-
-    if (currentForeCast.coord?.lat == null) {
-      return;
-    }
-
-    var lat = currentForeCast.coord?.lat;
-    var lon = currentForeCast.coord?.lon;
-    var city = currentForeCast.name;
-
-    var res = await dbHelper.insert(lat, lon, city);
-
-    if (res != 0) {
-      _currentWeatherLocations = [..._currentWeatherLocations, currentForeCast];
-    }
-
-    isLoading = false;
-    notifyListeners();
-  }
-
-  void updateHomeWidget(String lat, String lon) async {
-    CurrentForeCast currentForeCast =
-        await WeatherApiClient().dataForecastCurrent(lat, lon, null);
-
-    HomeWidget.saveWidgetData<String>('_location', currentForeCast.name);
-
-    HomeWidget.saveWidgetData<String>(
-        '_temp', "${currentForeCast.main?.temp?.round().toString()}°");
-
-    int dt = currentForeCast.dt! + currentForeCast.timezone! - 25200;
-    dynamic code = currentForeCast.weather?[0].icon;
-    String type = getTypeCode(code, dt);
-
-    HomeWidget.saveWidgetData<String>('_img', "a$type");
-
-    HomeWidget.updateWidget(name: 'HomeScreenWidgetProvider');
-  }
-
-  void deleteCurrentWeatherLocation(var idx) async {
-    _currentWeatherLocations.removeAt(idx);
-    notifyListeners();
   }
 
   void loading() {
@@ -199,29 +55,94 @@ class WeatherProvider with ChangeNotifier {
     return prefs.getStringList('current');
   }
 
+// ====================================================
+
+  void updateHomeWidget(String lat, String lon) async {
+    CurrentForeCast currentForeCast =
+        await WeatherApiClient().getDataCurrentWeather(lat, lon);
+
+    HomeWidget.saveWidgetData<String>('_location', currentForeCast.name);
+
+    HomeWidget.saveWidgetData<String>(
+        '_temp', "${currentForeCast.main?.temp?.round().toString()}°");
+
+    int dt = currentForeCast.dt! + currentForeCast.timezone! - 25200;
+    dynamic code = currentForeCast.weather?[0].icon;
+    String type = getTypeCode(code, dt);
+
+    HomeWidget.saveWidgetData<String>('_img', "a$type");
+
+    HomeWidget.updateWidget(name: 'HomeScreenWidgetProvider');
+  }
+
   changeIndexCurrentLocationsWeather(int oldIndex, int newIndex) async {
     if (oldIndex < newIndex) {
       newIndex -= 1;
     }
 
-    final CurrentForeCast item = _currentWeatherLocations.removeAt(oldIndex);
-    _currentWeatherLocations.insert(newIndex, item);
+    final CurrentForeCast item = _currentWeatherOfLocations.removeAt(oldIndex);
+    _currentWeatherOfLocations.insert(newIndex, item);
+
+    final item2 = _detailDataOfAllPageWeather.removeAt(oldIndex);
+    _detailDataOfAllPageWeather.insert(newIndex, item2);
 
     notifyListeners();
   }
 
-  Future<dynamic> getDetailDataOfPageView(var lat, var lon) async {
+  void updateCurrentWeatherOfLocation(var geo, {var q = ""}) async {
+    var result = await getDetailDataOfPageView(geo.lat, geo.lon, q: q);
+
+    CurrentForeCast currentForeCast = result[0];
+
+    if (currentForeCast.coord?.lat == null) {
+      _currentWeatherOfLocations.removeLast();
+      _detailDataOfAllPageWeather.removeLast();
+      return;
+    }
+
+    var lat = currentForeCast.coord?.lat;
+    var lon = currentForeCast.coord?.lon;
+    var city = currentForeCast.name;
+
+    var res = await dbHelper.insert(lat, lon, city);
+
+    if (res == 0) {
+      _currentWeatherOfLocations.removeLast();
+      _detailDataOfAllPageWeather.removeLast();
+    }
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  void deleteCurrentWeatherOfLocation(var index) {
+    _currentWeatherOfLocations.removeAt(index);
+    _detailDataOfAllPageWeather.removeAt(index);
+
+    notifyListeners();
+  }
+
+  Future<dynamic> getDetailDataOfPageView(var lat, var lon,
+      {String q = ''}) async {
+    String subQuery = '';
+
+    if (lat != null && lon != null) {
+      subQuery = "lat=$lat&lon=$lon";
+    } else {
+      subQuery = "q=$q";
+    }
+
     String apiCurrentForecast =
-        'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&units=metric&lang=vi&appid=${dotenv.env['API_KEY_WEATHER']}';
+        'https://api.openweathermap.org/data/2.5/weather?$subQuery&units=metric&lang=vi&appid=${dotenv.env['API_KEY_WEATHER']}';
 
     String apiHourlyForecast =
-        'https://pro.openweathermap.org/data/2.5/forecast/hourly?lat=$lat&lon=$lon&units=metric&lang=vi&appid=${dotenv.env['API_KEY_WEATHER']}';
+        'https://pro.openweathermap.org/data/2.5/forecast/hourly?$subQuery&units=metric&lang=vi&appid=${dotenv.env['API_KEY_WEATHER']}';
 
     String apiDailyForeCast =
-        'https://pro.openweathermap.org/data/2.5/forecast/daily?lat=$lat&lon=$lon&cnt=7&units=metric&lang=vi&appid=${dotenv.env['API_KEY_WEATHER']}';
+        'https://pro.openweathermap.org/data/2.5/forecast/daily?$subQuery&cnt=7&units=metric&lang=vi&appid=${dotenv.env['API_KEY_WEATHER']}';
 
     String apiAirPollution =
-        "https://api.openweathermap.org/data/2.5/air_pollution?lat=$lat&lon=$lon&appid=${dotenv.env['API_KEY_WEATHER']}";
+        "https://api.openweathermap.org/data/2.5/air_pollution?$subQuery&appid=${dotenv.env['API_KEY_WEATHER']}";
 
     try {
       List<dynamic> result = await Future.wait([
@@ -231,24 +152,39 @@ class WeatherProvider with ChangeNotifier {
         http.get(Uri.parse(apiAirPollution))
       ]);
 
-      _detailDataOfAllPageWeather.add([
+      AirPollution airPollution;
+
+      if (q != '') {
+        var lat =
+            CurrentForeCast.fromJson(jsonDecode(result[0].body)).coord?.lat;
+        var lon =
+            CurrentForeCast.fromJson(jsonDecode(result[0].body)).coord?.lon;
+
+        var resAirPollution = await http.get(Uri.parse(
+            "https://api.openweathermap.org/data/2.5/air_pollution?lat=$lat&lon=$lon&appid=${dotenv.env['API_KEY_WEATHER']}"));
+
+        airPollution =
+            AirPollution.fromJson(jsonDecode(resAirPollution.body)['list'][0]);
+      } else {
+        airPollution =
+            AirPollution.fromJson(jsonDecode(result[3].body)['list'][0]);
+      }
+
+      List<dynamic> res = [
         CurrentForeCast.fromJson(jsonDecode(result[0].body)),
         jsonDecode(result[1].body),
         jsonDecode(result[2].body),
-        AirPollution.fromJson(jsonDecode(result[3].body))
-      ]);
+        airPollution
+      ];
+
+      _detailDataOfAllPageWeather.add([...res]);
 
       _currentWeatherOfLocations
           .add(CurrentForeCast.fromJson(jsonDecode(result[0].body)));
 
       notifyListeners();
 
-      return [
-        CurrentForeCast.fromJson(jsonDecode(result[0].body)),
-        jsonDecode(result[1].body),
-        jsonDecode(result[2].body),
-        AirPollution.fromJson(jsonDecode(result[3].body)['list'][0])
-      ];
+      return [...res];
     } catch (error) {
       rethrow;
     }

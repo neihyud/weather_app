@@ -53,20 +53,6 @@ class _MyHomePageState extends State<MyHomePage> {
   String title = '';
   String code = '';
 
-  int currentIndex = 0;
-
-  late List<Widget> weatherWidgets;
-
-  List<dynamic> detailDataOAllPageView = [];
-
-  changePage(index) {
-    // CurrentForeCast currentForeCast =  CurrentForeCast.fromJson(jsonDecode(detailDataOfPageView[index][0].body))  ;
-    CurrentForeCast currentForeCast = detailDataOAllPageView[index][0];
-    setState(() {
-      title = currentForeCast.name!;
-      code = currentForeCast.weather![0].icon!;
-    });
-  }
 
   @override
   void initState() {
@@ -77,32 +63,23 @@ class _MyHomePageState extends State<MyHomePage> {
     Provider.of<WeatherProvider>(context, listen: false)
         .getDetailDataOfAllPageView()
         .then((data) {
-      List<dynamic> data_ = [...data];
-      weatherWidgets = data_.map((dataWeather) {
-        return WeatherPageView(data: dataWeather);
-      }).toList();
-
       setState(() {
         _isLoading = false;
 
-        detailDataOAllPageView =
-            Provider.of<WeatherProvider>(context, listen: false)
-                .getDetailDataOfAllPageWeather;
-
-        CurrentForeCast currentForeCast = detailDataOAllPageView[0][0];
+        CurrentForeCast currentForeCast = [...data][0][0];
         title = currentForeCast.name!;
         code = currentForeCast.weather![0].icon!;
       });
     });
-
-    Provider.of<WeatherProvider>(context, listen: false)
-        .savedLocationForecast();
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final providerWeather = Provider.of<WeatherProvider>(context);
+    List<dynamic> data_ = [...providerWeather.getDetailDataOfAllPageWeather];
+
     return Container(
       decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -119,7 +96,9 @@ class _MyHomePageState extends State<MyHomePage> {
             leading: GestureDetector(
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return LocationPage(pageController: _pageController,);
+                    return LocationPage(
+                      pageController: _pageController,
+                    );
                   }));
                 },
                 child: const Icon(Icons.add)),
@@ -132,19 +111,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 )
               : PageView(
                   onPageChanged: (index) {
-                    changePage(index);
+                    CurrentForeCast currentForeCast = data_[index][0];
+                    setState(() {
+                      title = currentForeCast.name!;
+                      code = currentForeCast.weather![0].icon!;
+                    });
                   },
                   controller: _pageController,
-                  children: weatherWidgets,
+                  children: data_
+                      .map((dataWeather) => WeatherPageView(data: dataWeather))
+                      .toList(),
                 )),
     );
   }
-
-  // void navigateToPage(int pageIndex) {
-  //   _pageController.animateToPage(
-  //     pageIndex,
-  //     duration: Duration(milliseconds: 500),
-  //     curve: Curves.easeInOut,
-  //   );
-  // }
 }

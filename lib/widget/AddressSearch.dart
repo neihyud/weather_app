@@ -46,7 +46,7 @@ class AddressSearch extends SearchDelegate<Suggestion> {
           final weatherData =
               Provider.of<WeatherProvider>(context, listen: false);
 
-          weatherData.updateCurrentWeatherLocation(Geo(null, null), query);
+          weatherData.updateCurrentWeatherOfLocation(Geo(null, null), q: query);
 
           Navigator.pop(context);
         },
