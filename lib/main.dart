@@ -4,6 +4,7 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weather_app/helper/background_code.dart';
 import 'package:weather_app/models/CurrentForecast.dart';
 import 'package:weather_app/provider/WeatherProvider.dart';
@@ -49,31 +50,37 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final PageController _pageController = PageController(initialPage: 0);
+  PageController _pageController = PageController(initialPage: 0);
   bool _isLoading = false;
   String title = '';
   String code = '';
-  double _currentIndex = 0;
+  int _currentIndex = 0;
 
   @override
   void initState() {
+    super.initState();
+
     setState(() {
       _isLoading = true;
     });
 
     Provider.of<WeatherProvider>(context, listen: false)
         .getDetailDataOfAllPageView()
-        .then((data) {
+        .then((data) async {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+
+      int initialPage = pref.getInt('currentIndex') ?? 0;
       setState(() {
         _isLoading = false;
 
-        CurrentForeCast currentForeCast = [...data][0][0];
+        CurrentForeCast currentForeCast = [...data][initialPage][0];
         title = currentForeCast.name!;
         code = currentForeCast.weather![0].icon!;
+
+        _currentIndex = initialPage;
+        _pageController = PageController(initialPage: _currentIndex);
       });
     });
-
-    super.initState();
   }
 
   @override
@@ -95,30 +102,40 @@ class _MyHomePageState extends State<MyHomePage> {
               backgroundColor: Colors.transparent,
               elevation: 0,
               leading: GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
                       return LocationPage(
                         pageController: _pageController,
                       );
-                    }));
+                    })).then((result) => {
+                          // setState(() {
+                          //   print("current_index $_currentIndex");
+                          //   // _currentIndex = _currentIndex;
+                          // })
+
+                          // title = data_[_currentIndex][0].name!,
+                          // code = data_[_currentIndex][0].weather![0].icon!,
+                        });
                   },
                   child: const Icon(Icons.add)),
               centerTitle: true,
-              title: Column(
-                children: [
-                  Text(title),
-                  DotsIndicator(
-                    dotsCount: data_.length,
-                    position: _currentIndex,
-                    decorator: const DotsDecorator(
-                        color: Colors.white70,
-                        size: Size.square(5), // Inactive color
-                        activeColor: Colors.white,
-                        activeSize: Size.square(6)),
-                  ),
-                ],
-              )),
+              title: _isLoading
+                  ? null
+                  : Column(
+                      children: [
+                        Text(title),
+                        DotsIndicator(
+                          dotsCount: data_.length,
+                          position: _currentIndex.toDouble(),
+                          decorator: const DotsDecorator(
+                              color: Colors.white70,
+                              size: Size.square(5), // Inactive color
+                              activeColor: Colors.white,
+                              activeSize: Size.square(6)),
+                        ),
+                      ],
+                    )),
           body: _isLoading
               ? const Center(
                   child: CircularProgressIndicator(),
@@ -129,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     setState(() {
                       title = currentForeCast.name!;
                       code = currentForeCast.weather![0].icon!;
-                      _currentIndex = index.toDouble();
+                      _currentIndex = index;
                     });
                   },
                   controller: _pageController,

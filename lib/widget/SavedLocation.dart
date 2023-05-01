@@ -33,8 +33,8 @@ class _SavedLocationState extends State<SavedLocation> {
     Widget location(int index, CurrentForeCast currentForeCast,
         {bool isHome = false}) {
 
-      var lat = currentForeCast.coord?.lat.toString();
-      var lon = currentForeCast.coord?.lon.toString();
+      // var lat = currentForeCast.coord?.lat.toString();
+      // var lon = currentForeCast.coord?.lon.toString();
       String? name = currentForeCast.name;
 
       var temp = currentForeCast.main?.temp;
@@ -155,6 +155,7 @@ class _SavedLocationState extends State<SavedLocation> {
             onReorder: (int oldIndex, int newIndex) {
               providerWeather.changeIndexCurrentLocationsWeather(
                   oldIndex, newIndex);
+                  
             },
             children: [
               for (int index = 0; index < len; index += 1)

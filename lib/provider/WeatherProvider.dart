@@ -13,13 +13,13 @@ import '../models/AirPollution.dart';
 class WeatherProvider with ChangeNotifier {
   bool isLoading = false;
 
-  final List<dynamic> _detailDataOfAllPageWeather = [];
+  List<dynamic> _detailDataOfAllPageWeather = [];
   List<dynamic> get getDetailDataOfAllPageWeather {
     return [..._detailDataOfAllPageWeather];
   }
 
-  final List<CurrentForeCast> _currentWeatherOfLocations = [];
-  List<CurrentForeCast> get getCurrentWeatherOfLocations {
+  List<dynamic> _currentWeatherOfLocations = [];
+  List<dynamic> get getCurrentWeatherOfLocations {
     return [..._currentWeatherOfLocations];
   }
 
@@ -117,7 +117,7 @@ class WeatherProvider with ChangeNotifier {
       SharedPreferences pref = await SharedPreferences.getInstance();
       List<String>? cities = pref.getStringList('orderPlace');
       cities?.add('${_currentWeatherOfLocations.last.name}');
-      pref.setStringList('orderPlace', [...?cities]);
+      await pref.setStringList('orderPlace', [...?cities]);
     }
 
     isLoading = false;
@@ -131,7 +131,7 @@ class WeatherProvider with ChangeNotifier {
     SharedPreferences pref = await SharedPreferences.getInstance();
     List<String>? cities = pref.getStringList('orderPlace');
     cities?.removeAt(index);
-    pref.setStringList('orderPlace', [...?cities]);
+    await pref.setStringList('orderPlace', [...?cities]);
 
     notifyListeners();
   }
@@ -211,6 +211,15 @@ class WeatherProvider with ChangeNotifier {
 
     data = await dbHelper.queryAllRows();
 
+    if (data.isEmpty) {
+      await dbHelper.insert(35.6895, 139.6917, "Tokyo");
+      data = [
+        {'lat': 35.6895, 'lon': 139.6917, 'city': 'Tokyo'}
+      ];
+      pref.setStringList('current', ['35.6895', '139.6917', 'Tokyo']);
+      pref.setStringList('orderPlace', ['Tokyo']);
+    }
+
     int len = data.length;
 
     List<dynamic> req = [];
@@ -224,32 +233,42 @@ class WeatherProvider with ChangeNotifier {
 
     List<dynamic> result = await Future.wait([...req]);
 
-    if (!pref.containsKey('orderPlace')) {
-      pref.setStringList('orderPlace', [...cities]);
-    } else {
+    if (pref.getStringList('orderPlace')?.length == data.length) {
       cities = [...?pref.getStringList('orderPlace')];
+    } else {
+      await pref.setStringList('orderPlace', [...cities]);
     }
 
     if (pref.containsKey('current')) {
       paramsLocation = [...?pref.getStringList('current')];
     } else {
-      paramsLocation = ['21', '105', 'Hanoi'];
+      paramsLocation = ['35.6895', '139.6917', 'Tokyo'];
     }
 
+    List<dynamic> currentWeatherOfLocationsTemp = List.filled(len, null);
+    List<dynamic> detailDataOfAllPageWeatherTemp = List.filled(len, null);
     for (var oldIndex = 0; oldIndex < cities.length; oldIndex++) {
+      if (paramsLocation[2] == cities[oldIndex]) {
+        await pref.setInt('currentIndex', oldIndex);
+      }
+
       String? name = _currentWeatherOfLocations[oldIndex].name;
       int newIndex = cities.indexOf(name!);
-      if (oldIndex < newIndex) {
-        newIndex -= 1;
-      }
-      final CurrentForeCast currentForeCast =
-          _currentWeatherOfLocations.removeAt(oldIndex);
-      _currentWeatherOfLocations.insert(newIndex, currentForeCast);
 
-      final dataPageWeather = _detailDataOfAllPageWeather.removeAt(oldIndex);
-      _detailDataOfAllPageWeather.insert(newIndex, dataPageWeather);
+      if (newIndex == -1) continue;
+
+      currentWeatherOfLocationsTemp[newIndex] =
+          _currentWeatherOfLocations[oldIndex];
+
+      detailDataOfAllPageWeatherTemp[newIndex] = 
+          _detailDataOfAllPageWeather[oldIndex];
     }
 
-    return result;
+    _currentWeatherOfLocations = currentWeatherOfLocationsTemp;
+    _detailDataOfAllPageWeather = detailDataOfAllPageWeatherTemp;
+
+    notifyListeners();
+
+    return _detailDataOfAllPageWeather;
   }
 }

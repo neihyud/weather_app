@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:weather_app/main.dart';
 import 'package:weather_app/provider/WeatherProvider.dart';
 import 'package:weather_app/widget/SavedLocation.dart';
 import 'package:weather_app/widget/Search.dart';
@@ -26,7 +27,9 @@ class _PositionPageState extends State<LocationPage> {
         backgroundColor: Colors.transparent,
         leading: GestureDetector(
             onTap: () {
-              Navigator.pop(context);
+              // var title = providerWeather.getCurrentWeatherOfLocations;
+              widget.pageController.jumpToPage(0);
+              Navigator.pop(context, '');
             },
             child: const Icon(Icons.close)),
         title: const Text("Sửa địa điểm "),
@@ -60,7 +63,8 @@ class _PositionPageState extends State<LocationPage> {
                     child: CircularProgressIndicator(),
                   ),
                 ),
-              SavedLocation(isEdit: _isEdit, pageController: widget.pageController)
+              SavedLocation(
+                  isEdit: _isEdit, pageController: widget.pageController)
             ],
           )),
     );
