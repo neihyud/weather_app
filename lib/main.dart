@@ -53,6 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _isLoading = false;
   String title = '';
   String code = '';
+  double _currentIndex = 0;
 
   @override
   void initState() {
@@ -104,13 +105,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                   child: const Icon(Icons.add)),
               centerTitle: true,
-              title: Container(
-                  child: Column(
+              title: Column(
                 children: [
                   Text(title),
                   DotsIndicator(
-                    dotsCount: 5,
-                    position: 1,
+                    dotsCount: data_.length,
+                    position: _currentIndex,
                     decorator: const DotsDecorator(
                         color: Colors.white70,
                         size: Size.square(5), // Inactive color
@@ -118,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         activeSize: Size.square(6)),
                   ),
                 ],
-              ))),
+              )),
           body: _isLoading
               ? const Center(
                   child: CircularProgressIndicator(),
@@ -129,6 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     setState(() {
                       title = currentForeCast.name!;
                       code = currentForeCast.weather![0].icon!;
+                      _currentIndex = index.toDouble();
                     });
                   },
                   controller: _pageController,
