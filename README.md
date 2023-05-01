@@ -7,6 +7,7 @@
 - search auto complete
 - home widget
 - gps
+- page view
 
 ## Getting Started
 
