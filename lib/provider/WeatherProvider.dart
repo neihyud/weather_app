@@ -260,14 +260,14 @@ class WeatherProvider with ChangeNotifier {
       currentWeatherOfLocationsTemp[newIndex] =
           _currentWeatherOfLocations[oldIndex];
 
-      detailDataOfAllPageWeatherTemp[newIndex] = 
+      detailDataOfAllPageWeatherTemp[newIndex] =
           _detailDataOfAllPageWeather[oldIndex];
     }
 
-    _currentWeatherOfLocations = currentWeatherOfLocationsTemp;
-    _detailDataOfAllPageWeather = detailDataOfAllPageWeatherTemp;
+    _currentWeatherOfLocations = [...currentWeatherOfLocationsTemp];
+    _detailDataOfAllPageWeather = [...detailDataOfAllPageWeatherTemp];
 
-    notifyListeners();
+    // notifyListeners();
 
     return _detailDataOfAllPageWeather;
   }

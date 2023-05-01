@@ -109,13 +109,15 @@ class _MyHomePageState extends State<MyHomePage> {
                         pageController: _pageController,
                       );
                     })).then((result) => {
-                          // setState(() {
-                          //   print("current_index $_currentIndex");
-                          //   // _currentIndex = _currentIndex;
-                          // })
-
-                          // title = data_[_currentIndex][0].name!,
-                          // code = data_[_currentIndex][0].weather![0].icon!,
+                          setState(() {
+                            title = providerWeather
+                                .getDetailDataOfAllPageWeather[_currentIndex][0]
+                                .name!;
+                            code = providerWeather
+                                .getDetailDataOfAllPageWeather[_currentIndex][0]
+                                .weather![0]
+                                .icon!;
+                          })
                         });
                   },
                   child: const Icon(Icons.add)),
