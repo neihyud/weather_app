@@ -128,7 +128,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: [
                         Text(title),
                         DotsIndicator(
-                          dotsCount: data_.length,
+                          dotsCount: providerWeather
+                              .getCurrentWeatherOfLocations.length,
                           position: _currentIndex.toDouble(),
                           decorator: const DotsDecorator(
                               color: Colors.white70,
