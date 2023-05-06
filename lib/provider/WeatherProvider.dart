@@ -46,8 +46,9 @@ class WeatherProvider with ChangeNotifier {
     var lon = currentForeCast.coord?.lon;
     String name = currentForeCast.name.toString();
 
-    SharedPreferences.getInstance()
-        .then((pref) => pref.setStringList('current', ["$lat", "$lon", name]));
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    pref.setStringList('current', ["$lat", "$lon", name]);
 
     paramsLocation = ["$lat", "$lon", name];
 
@@ -124,7 +125,7 @@ class WeatherProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteCurrentWeatherOfLocation(var index) async {
+  deleteCurrentWeatherOfLocation(var index) async {
     _currentWeatherOfLocations.removeAt(index);
     _detailDataOfAllPageWeather.removeAt(index);
 
@@ -134,6 +135,7 @@ class WeatherProvider with ChangeNotifier {
     await pref.setStringList('orderPlace', [...?cities]);
 
     notifyListeners();
+    return;
   }
 
   Future<dynamic> getDetailDataOfPageView(var lat, var lon,
@@ -207,9 +209,7 @@ class WeatherProvider with ChangeNotifier {
   Future<dynamic> getDetailDataOfAllPageView() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
 
-    List<Map<String, dynamic>> data = [];
-
-    data = await dbHelper.queryAllRows();
+    List<Map<String, dynamic>> data = await dbHelper.queryAllRows();
 
     if (data.isEmpty) {
       await dbHelper.insert(35.6895, 139.6917, "Tokyo");
@@ -267,7 +267,7 @@ class WeatherProvider with ChangeNotifier {
     _currentWeatherOfLocations = [...currentWeatherOfLocationsTemp];
     _detailDataOfAllPageWeather = [...detailDataOfAllPageWeatherTemp];
 
-    // notifyListeners();
+    notifyListeners();
 
     return _detailDataOfAllPageWeather;
   }

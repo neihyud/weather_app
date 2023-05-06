@@ -117,9 +117,9 @@ class _SavedLocationState extends State<SavedLocation> {
                   top: 6,
                   right: 16,
                   child: GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       dbHelper.delete(name!);
-                      providerWeather.deleteCurrentWeatherOfLocation(index);
+                      await providerWeather.deleteCurrentWeatherOfLocation(index);
                     },
                     child: const Icon(
                       Icons.remove_circle,

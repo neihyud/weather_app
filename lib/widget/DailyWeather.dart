@@ -7,7 +7,34 @@ import '../models/DailyForecast.dart';
 
 String getDayOfWeek(final day) {
   DateTime time = DateTime.fromMillisecondsSinceEpoch(day * 1000);
-  final dayOfWeek = DateFormat('EEEE').format(time);
+  String dayOfWeek = DateFormat('EEEE').format(time);
+
+  switch (dayOfWeek) {
+    case "Monday":
+      dayOfWeek = "Thứ Hai";
+      break;
+    case "Tuesday":
+      dayOfWeek = "Thứ Ba";
+      break;
+    case "Wednesday":
+      dayOfWeek = "Thứ Tư";
+      break;
+    case "Thursday":
+      dayOfWeek = "Thứ Năm";
+      break;
+    case "Friday":
+      dayOfWeek = "Thứ Sáu";
+      break;
+    case "Saturday":
+      dayOfWeek = "Thứ Bảy";
+      break;
+    case "Sunday":
+      dayOfWeek = "Chủ Nhật";
+      break;
+    default:
+      dayOfWeek = "Thứ Hai";
+  }
+
   return dayOfWeek;
 }
 
